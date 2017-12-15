@@ -1,0 +1,13 @@
+package ballworld;
+
+import java.awt.*;
+
+
+public class StraightBall extends ABall{
+
+	public StraightBall(Point origin, Color color, int radius, Point velocity, Component canvas) {
+		super(origin, color, radius, velocity, canvas);
+	}
+	
+	public void trace_ball() {};
+}

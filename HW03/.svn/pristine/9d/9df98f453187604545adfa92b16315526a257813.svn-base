@@ -1,0 +1,15 @@
+package strategy;
+
+import model.Ball;
+import model.IUpdateStrategy;
+import util.Randomizer;
+
+public class ColorChangingStrategy implements IUpdateStrategy{
+
+	@Override
+	public void updateState(Ball ball) {
+		// TODO Auto-generated method stub
+		ball.color = Randomizer.Singleton.randomColor();
+	}
+
+}

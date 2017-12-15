@@ -1,0 +1,21 @@
+package model.strategy;
+import java.awt.geom.AffineTransform;
+
+import model.strategy.shape.RectangleShapeFactory;
+
+
+public class RectanglePaintStrategy extends ShapePaintStrategy {
+  
+  /**
+   * No parameter constructor that creates a prototype ellipse that 
+   * has twice the width as height but an average radius of 1.
+   * An AffineTranform for internal use is instantiated.
+   */
+  public RectanglePaintStrategy(){
+    this(new AffineTransform(), 0, 0, 4.0/3.0, 2.0/3.0);
+  }
+  
+  public RectanglePaintStrategy(AffineTransform at, double x, double y, double width, double height){
+    super(at, RectangleShapeFactory.Singleton.makeShape(x,y,width,height));
+  }
+}

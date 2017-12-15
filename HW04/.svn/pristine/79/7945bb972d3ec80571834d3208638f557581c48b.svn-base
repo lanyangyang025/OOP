@@ -1,0 +1,213 @@
+
+package ball;
+
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Point;
+
+import java.util.Observable;
+import java.util.Observer;
+
+import model.strategy.IPaintStrategy;
+import strategy.*;
+
+import java.awt.Component;
+
+/**
+ * The class that represents the basic movement and features of Ball.
+ * @author Yiqing Lu
+ * @author Ye Wang
+ */
+public class Ball implements Observer {
+	/**
+	 * the point of upperleft corner of the circle
+	 */
+	Point upperLeft;
+
+	/**
+	 * the x-coordinate and y-coordiante of the moving velocity of the circle
+	 */
+	Point velocity;
+
+	/**
+	 * the radius of the circle
+	 */
+	int radius;
+
+	/**
+	 * the color of the circle
+	 */
+	Color myColor;
+
+	/**
+	 * the strategy to update its state
+	 */
+	IUpdateStrategy strategy;
+
+	/**
+	 * the canvas of the circle to move and paint on
+	 */
+	Component canvas;
+
+	IPaintStrategy paint_strategy;
+
+	/**
+	 * constructor of ABall
+	 * @param upperLeft the point of upperleft corner of the circle
+	 * @param velocity the point of velocity
+	 * @param radius the radius of the circle
+	 * @param myColor the color of the circle
+	 * @param canvas canvas that to paint the circle
+	 * @param strategy the ball's strategy of moving
+	 * @param paint_strategy the ball's paint strategy
+	 */
+	public Ball(Point upperLeft, Point velocity, int radius, Color myColor, Component canvas, IUpdateStrategy strategy,
+			IPaintStrategy paint_strategy) {
+		this.upperLeft = upperLeft;
+		this.velocity = velocity;
+		this.radius = radius;
+		this.myColor = myColor;
+		this.strategy = strategy;
+		this.canvas = canvas;
+		this.paint_strategy = paint_strategy;
+		paint_strategy.init(this);
+	}
+
+	/**
+	 *  method to paint the circle in the given graphics
+	 *  @param g The Graphics object to paint on.
+	 */
+	public void paint(Graphics g) {
+		paint_strategy.paint(g, this);
+
+		//x - the x coordinate of the upper left corner of the oval to be filled.
+		//y - the y coordinate of the upper left corner of the oval to be filled.
+	}
+
+	/**
+	 *  method to change the location of the ball as per its velocity
+	 */
+	public void move() {
+		upperLeft.x = upperLeft.x + velocity.x;
+		upperLeft.y = upperLeft.y + velocity.y;
+	}
+
+	/**
+	 *  method to  correct the location and velocity of a ball if it has contacted a wall
+	 */
+	public void bounce() {
+
+		if (upperLeft.x - radius <= 0) {
+			velocity.x = -velocity.x;
+			upperLeft.x = 2 * radius - upperLeft.x;
+		}
+		if (upperLeft.x + radius >= canvas.getWidth()) {
+			velocity.x = -velocity.x;
+			upperLeft.x = 2 * canvas.getWidth() - upperLeft.x - 2 * radius;
+		}
+
+		if (upperLeft.y - radius <= 0) {
+			velocity.y = -velocity.y;
+			upperLeft.y = 2 * radius - upperLeft.y;
+		}
+
+		if (upperLeft.y + radius >= canvas.getHeight()) {
+			velocity.y = -velocity.y;
+			upperLeft.y = 2 * canvas.getHeight() - upperLeft.y - 2 * radius;
+		}
+	}
+
+	/**
+	 * abstract method to change the balls each time point
+	 */
+	public void change() {
+		strategy.updateState(this);
+	}
+
+	/**
+	 * This method is called whenever the observed object is changed.
+	 * @param o the observable object.
+	 * @param g  an argument passed to the notifyObservers method.
+	 */
+
+	public void update(Observable o, Object g) {
+		move();
+		change();
+		bounce();
+		paint((Graphics) g);
+	}
+
+	/**
+	 * getter method of the ball's upper left location
+	 * @return the upper left location of the ball
+	 */
+	public Point getLoc() {
+		return upperLeft;
+	}
+
+	/**
+	 * setter method of the ball's upper left location
+	 * @param p the upper left location of the ball
+	 */
+	public void setLoc(Point p) {
+		this.upperLeft = p;
+	}
+
+	/**
+	 * method to set the color of the ball
+	 * @param newColor the new color given to the ball
+	 */
+	public void setColor(Color newColor) {
+		this.myColor = newColor;
+	}
+
+	/**
+	 * getter method of the ball's current velocity
+	 * @return current velocity
+	 */
+	public Point getVelocity() {
+		return velocity;
+	}
+
+	/**
+	 * setter method to give the ball a new velocity
+	 * @param v the new velocity given to the ball
+	 */
+	public void setVelocity(Point v) {
+		this.velocity = v;
+	}
+
+	/**
+	 * getter method of the ball's radius
+	 * @return the current ball's radius
+	 */
+	public int getRadius() {
+		return radius;
+	}
+
+	/**
+	 * setter method of the ball's radius
+	 * @param r the new radius
+	 */
+	public void setRadius(int r) {
+		this.radius = r;
+	}
+
+	/**
+	 * getter method of the ball's color
+	 * @return the current ball's color
+	 */
+
+	public Color getColor() {
+		return this.myColor;
+	}
+
+	/**
+	 * getter method of the canvas
+	 * @return the current canvas
+	 */
+
+	public Component getCanvas() {
+		return this.canvas;
+	}
+}

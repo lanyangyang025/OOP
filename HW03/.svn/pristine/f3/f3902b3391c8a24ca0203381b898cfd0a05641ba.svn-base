@@ -1,0 +1,22 @@
+package strategy;
+
+import model.Ball;
+import model.IUpdateStrategy;
+
+public class SwitcherStrategy implements IUpdateStrategy {
+	
+	private IUpdateStrategy strategy;
+	
+	public SwitcherStrategy(){
+		this.strategy = new StraightStrategy();
+	}
+	
+	@Override
+	public void updateState(Ball the_ball){
+		strategy.updateState(the_ball);
+	}
+	
+	public void setStartegy(IUpdateStrategy strategy){
+		this.strategy = strategy;
+	}
+}

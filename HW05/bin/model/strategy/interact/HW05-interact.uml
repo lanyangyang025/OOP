@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xmi:XMI xmi:version="20131001" xmlns:xmi="http://www.omg.org/spec/XMI/20131001" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:UMLLabProfile="http:///schemas/UMLLabProfile/NS/0" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:uml="http://www.eclipse.org/uml2/5.0.0/UML" xsi:schemaLocation="http:///schemas/UMLLabProfile/NS/0 pathmap://UMLLAB_PROFILES/UMLLab.profile.uml#UMLLabProfile-Annotation_2-UMLLabProfile">
+  <uml:Model xmi:id="_gebtcKffEee2SNMbqrjBbg" name="HW05_interact">
+    <eAnnotations xmi:id="_gk5h0KffEee2SNMbqrjBbg" source="http://ns.yatta.de/umllab">
+      <contents xmi:type="ecore:EAnnotation" xmi:id="_gk5h0affEee2SNMbqrjBbg" source="codegen">
+        <details xmi:id="_gk5h0qffEee2SNMbqrjBbg" key="codegenDirectory" value="/HW05/src"/>
+        <details xmi:id="_gs_t4KffEee2SNMbqrjBbg" key="AssociatedSourceCode" value="/HW05/src/model/strategy/interact/IInteractStrategy.java;2129901434/1;/HW05/src/model/strategy/interact/MultipleInteractStrategy.java;3138528651/1;"/>
+      </contents>
+    </eAnnotations>
+    <elementImport xmi:id="_gqZs4KffEee2SNMbqrjBbg">
+      <importedElement xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/JavaPrimitiveTypes.library.uml#boolean"/>
+    </elementImport>
+    <elementImport xmi:id="_gqZs4affEee2SNMbqrjBbg">
+      <importedElement xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/JavaPrimitiveTypes.library.uml#byte"/>
+    </elementImport>
+    <elementImport xmi:id="_gqZs4qffEee2SNMbqrjBbg">
+      <importedElement xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/JavaPrimitiveTypes.library.uml#char"/>
+    </elementImport>
+    <elementImport xmi:id="_gqZs46ffEee2SNMbqrjBbg">
+      <importedElement xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/JavaPrimitiveTypes.library.uml#double"/>
+    </elementImport>
+    <elementImport xmi:id="_gqZs5KffEee2SNMbqrjBbg">
+      <importedElement xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/JavaPrimitiveTypes.library.uml#float"/>
+    </elementImport>
+    <elementImport xmi:id="_gqZs5affEee2SNMbqrjBbg">
+      <importedElement xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/JavaPrimitiveTypes.library.uml#int"/>
+    </elementImport>
+    <elementImport xmi:id="_gqZs5qffEee2SNMbqrjBbg">
+      <importedElement xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/JavaPrimitiveTypes.library.uml#long"/>
+    </elementImport>
+    <elementImport xmi:id="_gqZs56ffEee2SNMbqrjBbg">
+      <importedElement xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/JavaPrimitiveTypes.library.uml#short"/>
+    </elementImport>
+    <elementImport xmi:id="_gqZs6KffEee2SNMbqrjBbg">
+      <importedElement xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+    </elementImport>
+    <packagedElement xmi:type="uml:Package" xmi:id="_gqVbcKffEee2SNMbqrjBbg" name="model">
+      <packagedElement xmi:type="uml:Package" xmi:id="_gqVbcaffEee2SNMbqrjBbg" name="strategy">
+        <packagedElement xmi:type="uml:Package" xmi:id="_gqWpkKffEee2SNMbqrjBbg" name="interact">
+          <packagedElement xmi:type="uml:Interface" xmi:id="_gqYewKffEee2SNMbqrjBbg" name="IInteractStrategy">
+            <ownedComment xmi:id="_gqsn0KffEee2SNMbqrjBbg">
+              <body>Interact Strategy to handle the interaction with different balls&#xD;
+@author HaoyuanYue&#xD;
+@author YiqingLu</body>
+            </ownedComment>
+            <ownedAttribute xmi:id="_gqaT8KffEee2SNMbqrjBbg" name="NULL_STRATEGY" isLeaf="true" isStatic="true" type="_gqYewKffEee2SNMbqrjBbg" isReadOnly="true" association="_gqtO4KffEee2SNMbqrjBbg">
+              <defaultValue xmi:type="uml:LiteralString" xmi:id="_gqaT8affEee2SNMbqrjBbg" value="(context, target, disp)->{}"/>
+            </ownedAttribute>
+            <ownedOperation xmi:id="_gqo9cKffEee2SNMbqrjBbg" name="interact">
+              <ownedParameter xmi:id="_gqo9caffEee2SNMbqrjBbg" name="context" type="_gqlTEKffEee2SNMbqrjBbg"/>
+              <ownedParameter xmi:id="_gqo9cqffEee2SNMbqrjBbg" name="target" type="_gqlTEKffEee2SNMbqrjBbg"/>
+              <ownedParameter xmi:id="_gqo9c6ffEee2SNMbqrjBbg" name="disp" type="_gql6IKffEee2SNMbqrjBbg"/>
+            </ownedOperation>
+          </packagedElement>
+          <packagedElement xmi:type="uml:Class" xmi:id="_gqbiEKffEee2SNMbqrjBbg" name="MultipleInteractStrategy">
+            <ownedComment xmi:id="_gqsn0affEee2SNMbqrjBbg">
+              <body>Interact Strategy to handle the interaction with different balls&#xD;
+@author HaoyuanYue&#xD;
+@author YiqingLu</body>
+            </ownedComment>
+            <ownedAttribute xmi:id="_gqqyoKffEee2SNMbqrjBbg" name="i1" visibility="private" type="_gqYewKffEee2SNMbqrjBbg" association="_gqt18affEee2SNMbqrjBbg"/>
+            <ownedAttribute xmi:id="_gqqyoqffEee2SNMbqrjBbg" name="i2" visibility="private" type="_gqYewKffEee2SNMbqrjBbg" association="_gqudAaffEee2SNMbqrjBbg"/>
+            <interfaceRealization xmi:id="_gqmhMKffEee2SNMbqrjBbg" client="_gqbiEKffEee2SNMbqrjBbg" supplier="_gqYewKffEee2SNMbqrjBbg" contract="_gqYewKffEee2SNMbqrjBbg"/>
+            <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_gqsAwKffEee2SNMbqrjBbg" name="MultipleInteractStrategy" specification="_gqnIQKffEee2SNMbqrjBbg">
+              <ownedParameter xmi:id="_gqsAwaffEee2SNMbqrjBbg" name="_i1" type="_gqYewKffEee2SNMbqrjBbg"/>
+              <ownedParameter xmi:id="_gqsAwqffEee2SNMbqrjBbg" name="_i2" type="_gqYewKffEee2SNMbqrjBbg"/>
+              <ownedParameter xmi:id="_gqsAw6ffEee2SNMbqrjBbg" type="_gqbiEKffEee2SNMbqrjBbg" direction="return"/>
+              <language>java</language>
+              <body>i1 = _i1;&#xD;
+		i2 = _i2;&#xD;
+	</body>
+            </ownedBehavior>
+            <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_gqsAxKffEee2SNMbqrjBbg" name="interact" specification="_gqpkgaffEee2SNMbqrjBbg">
+              <ownedParameter xmi:id="_gqsAxaffEee2SNMbqrjBbg" name="context" type="_gqlTEKffEee2SNMbqrjBbg"/>
+              <ownedParameter xmi:id="_gqsAxqffEee2SNMbqrjBbg" name="target" type="_gqlTEKffEee2SNMbqrjBbg"/>
+              <ownedParameter xmi:id="_gqsAx6ffEee2SNMbqrjBbg" name="disp" type="_gql6IKffEee2SNMbqrjBbg"/>
+              <language>java</language>
+              <body>if (context == null) {&#xD;
+			context = Ball.NULL_OBJECT;&#xD;
+		}&#xD;
+		&#xD;
+		if (target == null) {&#xD;
+			target = Ball.NULL_OBJECT;&#xD;
+		}&#xD;
+		&#xD;
+		if (i1 != null) {&#xD;
+			i1.interact(context, target, disp);&#xD;
+		}&#xD;
+		if (i2 != null) {&#xD;
+			i2.interact(context, target, disp);&#xD;
+		}&#xD;
+		&#xD;
+	</body>
+            </ownedBehavior>
+            <ownedOperation xmi:id="_gqnIQKffEee2SNMbqrjBbg" name="MultipleInteractStrategy" method="_gqsAwKffEee2SNMbqrjBbg">
+              <eAnnotations xmi:id="_gqnIQ6ffEee2SNMbqrjBbg" source="http://www.eclipse.org/uml2/2.0.0/UML">
+                <details xmi:id="_gqnIRKffEee2SNMbqrjBbg" key="create"/>
+              </eAnnotations>
+              <ownedComment xmi:id="_gqsn0qffEee2SNMbqrjBbg">
+                <body>Constructor for multipleInteractStrategy &#xD;
+	 * @param _i1 An interact strategy&#xD;
+	 * @param _i2 An interact strategy</body>
+              </ownedComment>
+              <ownedParameter xmi:id="_gqnIQaffEee2SNMbqrjBbg" name="_i1" type="_gqYewKffEee2SNMbqrjBbg"/>
+              <ownedParameter xmi:id="_gqnIQqffEee2SNMbqrjBbg" name="_i2" type="_gqYewKffEee2SNMbqrjBbg"/>
+              <ownedParameter xmi:id="_gqnIRaffEee2SNMbqrjBbg" type="_gqbiEKffEee2SNMbqrjBbg" direction="return"/>
+            </ownedOperation>
+            <ownedOperation xmi:id="_gqpkgaffEee2SNMbqrjBbg" name="interact" method="_gqsAxKffEee2SNMbqrjBbg">
+              <ownedComment xmi:id="_gqsn06ffEee2SNMbqrjBbg">
+                <body>Interact with other ball&#xD;
+	 * @param context A ball&#xD;
+	 * @param target A ball&#xD;
+	 * @param disp A dispatcher</body>
+              </ownedComment>
+              <ownedParameter xmi:id="_gqpkgqffEee2SNMbqrjBbg" name="context" type="_gqlTEKffEee2SNMbqrjBbg"/>
+              <ownedParameter xmi:id="_gqpkg6ffEee2SNMbqrjBbg" name="target" type="_gqlTEKffEee2SNMbqrjBbg"/>
+              <ownedParameter xmi:id="_gqpkhKffEee2SNMbqrjBbg" name="disp" type="_gql6IKffEee2SNMbqrjBbg"/>
+            </ownedOperation>
+          </packagedElement>
+          <packagedElement xmi:type="uml:Association" xmi:id="_gqtO4KffEee2SNMbqrjBbg" name="" memberEnd="_gqtO4affEee2SNMbqrjBbg _gqaT8KffEee2SNMbqrjBbg">
+            <ownedEnd xmi:id="_gqtO4affEee2SNMbqrjBbg" name="" type="_gqYewKffEee2SNMbqrjBbg" association="_gqtO4KffEee2SNMbqrjBbg"/>
+          </packagedElement>
+          <packagedElement xmi:type="uml:Association" xmi:id="_gqt18affEee2SNMbqrjBbg" name="" memberEnd="_gqt18qffEee2SNMbqrjBbg _gqqyoKffEee2SNMbqrjBbg">
+            <ownedEnd xmi:id="_gqt18qffEee2SNMbqrjBbg" name="" type="_gqbiEKffEee2SNMbqrjBbg" association="_gqt18affEee2SNMbqrjBbg"/>
+          </packagedElement>
+          <packagedElement xmi:type="uml:Association" xmi:id="_gqudAaffEee2SNMbqrjBbg" name="" memberEnd="_gqudAqffEee2SNMbqrjBbg _gqqyoqffEee2SNMbqrjBbg">
+            <ownedEnd xmi:id="_gqudAqffEee2SNMbqrjBbg" name="" type="_gqbiEKffEee2SNMbqrjBbg" association="_gqudAaffEee2SNMbqrjBbg"/>
+          </packagedElement>
+        </packagedElement>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Package" xmi:id="_gqWCgKffEee2SNMbqrjBbg" name="ball">
+        <packagedElement xmi:type="uml:Class" xmi:id="_gqlTEKffEee2SNMbqrjBbg" name="Ball"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Interface" xmi:id="_gqkE8KffEee2SNMbqrjBbg" name="IBallCmd"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Package" xmi:id="_gqWCgaffEee2SNMbqrjBbg" name="util">
+      <packagedElement xmi:type="uml:Interface" xmi:id="_gql6IKffEee2SNMbqrjBbg" name="IDispatcher"/>
+    </packagedElement>
+    <profileApplication xmi:id="_gk6I4KffEee2SNMbqrjBbg">
+      <eAnnotations xmi:id="_gk6I4affEee2SNMbqrjBbg" source="http://www.eclipse.org/uml2/2.0.0/UML">
+        <references xmi:type="ecore:EPackage" href="pathmap://UMLLAB_PROFILES/UMLLab.profile.uml#UMLLabProfile-Annotation_2-UMLLabProfile"/>
+      </eAnnotations>
+      <appliedProfile href="pathmap://UMLLAB_PROFILES/UMLLab.profile.uml#UMLLabProfile"/>
+    </profileApplication>
+  </uml:Model>
+  <UMLLabProfile:TargetLanguage xmi:id="_gk6v8KffEee2SNMbqrjBbg" base_Package="_gebtcKffEee2SNMbqrjBbg">
+    <languageName>java</languageName>
+  </UMLLabProfile:TargetLanguage>
+  <UMLLabProfile:Reference xmi:id="_gqksAKffEee2SNMbqrjBbg" base_Element="_gqkE8KffEee2SNMbqrjBbg"/>
+  <UMLLabProfile:Reference xmi:id="_gqlTEaffEee2SNMbqrjBbg" base_Element="_gqlTEKffEee2SNMbqrjBbg"/>
+  <UMLLabProfile:Reference xmi:id="_gql6IaffEee2SNMbqrjBbg" base_Element="_gql6IKffEee2SNMbqrjBbg"/>
+  <UMLLabProfile:Generics xmi:id="_gqpkgKffEee2SNMbqrjBbg" genericsValue="IBallCmd" base_Element="_gqo9c6ffEee2SNMbqrjBbg"/>
+  <UMLLabProfile:Generics xmi:id="_gqqLkKffEee2SNMbqrjBbg" genericsValue="IBallCmd" base_Element="_gqpkhKffEee2SNMbqrjBbg"/>
+  <UMLLabProfile:LegacyStyledElement xmi:id="_gqqyoaffEee2SNMbqrjBbg" base_Element="_gqqyoKffEee2SNMbqrjBbg"/>
+  <UMLLabProfile:LegacyStyledElement xmi:id="_gqrZsKffEee2SNMbqrjBbg" base_Element="_gqqyoqffEee2SNMbqrjBbg"/>
+  <UMLLabProfile:Reference xmi:id="_gqt18KffEee2SNMbqrjBbg" base_Element="_gqtO4KffEee2SNMbqrjBbg"/>
+  <UMLLabProfile:Reference xmi:id="_gqudAKffEee2SNMbqrjBbg" base_Element="_gqt18affEee2SNMbqrjBbg"/>
+  <UMLLabProfile:Reference xmi:id="_gqvEEKffEee2SNMbqrjBbg" base_Element="_gqudAaffEee2SNMbqrjBbg"/>
+</xmi:XMI>

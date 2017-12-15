@@ -1,0 +1,21 @@
+package shape;
+
+import java.awt.Color;
+import java.awt.Graphics;
+
+public class Circle {
+	private int radius = 5;
+
+	public Circle(int x, int y, Color color, int radius) {
+		this.x_location = x;
+		this.y_location = y;
+		this.color = color;
+		this.radius = radius;
+	}
+
+	public void paint(Graphics g) {
+		g.setColor(color); // Set the color to use when drawing
+		g.fillOval(x_location, y_location, radius, radius); // paint a filled 20x40 red ellipse whose upper left corner is at (75, 100)
+	}
+
+}

@@ -1,0 +1,145 @@
+package model;
+
+import java.net.SocketException;
+import java.net.UnknownHostException;
+import java.rmi.AccessException;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
+import java.util.function.Consumer;
+
+import provided.compute.ICompute;
+import provided.compute.IRemoteTaskViewAdapter;
+import provided.rmiUtils.IRMIUtils;
+import provided.rmiUtils.IRMI_Defs;
+import provided.rmiUtils.RMIUtils;
+
+public class ClientModel {
+	
+	/**
+	 * Model to View adapter of Client
+	 */
+	IClientViewAdapter adapter;
+	
+	public ClientModel(IClientViewAdapter adapter) {
+		this.adapter = adapter;
+	}
+	
+	/**
+	 * The command used to ouput the status to the textarea of the client view
+	 */
+	private Consumer<String> outputCmd = (x) -> adapter.outputToTextArea(x + "\n");
+	
+	/**
+	 * Initialize RMI with the pre-defined command
+	 */
+	private IRMIUtils rmi= new RMIUtils(outputCmd);
+
+	/**
+	 * A remote view adapter that enables a task or any other part of a system to display
+	 * a text message on the user interface of a remote system.
+	 * 
+	 * This one is used for client to output message on server's view
+	 */
+	private IRemoteTaskViewAdapter engineAdapter;
+	
+	/**
+	 * Stub of cientAdapter
+	 */
+	private IRemoteTaskViewAdapter clientAdapterStub = null;
+	
+	/**
+	 * A remote view adapter that enables a task or any other part of a system to display
+	 * a text message on the user interface of a remote system.
+	 * 
+	 * This one is used for server to output message on client's view 
+	 */
+	private IRemoteTaskViewAdapter clientAdapter = new IRemoteTaskViewAdapter() {
+
+		@Override
+		public void append(String s) throws RemoteException {
+			// TODO Auto-generated method stub
+			adapter.outputToTextArea("[Engine Server] " + s + "\n");
+		}
+		
+	};
+	
+	
+	
+	/**
+	 * Stub of the remote ICompute object
+	 */
+	private ICompute stub;
+	
+	/**
+	 * Initialize the client application
+	 * By setting and start RMI
+	 * And set the local address to the txtRemoteAddress JTextField of the client view
+	 */
+	public void init() {
+		rmi.startRMI(IRMI_Defs.CLASS_SERVER_PORT_CLIENT);
+		
+		try {
+			adapter.setRemoteAdress(rmi.getLocalAddress());
+		} catch (SocketException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
+	/**
+	 * 
+	 * @param address
+	 * @return
+	 */
+	public void connect(String address) {
+		adapter.outputToTextArea("[ClientModel.connect()]: Locating registry at " + address + "...\n");
+		
+		Registry registry = rmi.getRemoteRegistry(address);
+		
+		try {
+			stub = (ICompute) registry.lookup(ICompute.BOUND_NAME);
+			
+			// Exports the remote object to make it available to receive incoming
+		    // calls, using the particular supplied port.
+			if (clientAdapterStub == null) {
+				clientAdapterStub = (IRemoteTaskViewAdapter) UnicastRemoteObject.exportObject(clientAdapter, 
+						IRemoteTaskViewAdapter.BOUND_PORT_CLIENT);
+			}
+			
+			engineAdapter = stub.setTextAdapter(clientAdapterStub);
+			adapter.outputToTextArea("[ClientModel.connect()] Got text adapater: " + engineAdapter + "\n");
+			engineAdapter.append("Hello from the client! \n");
+			
+			
+		} catch (AccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NotBoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
+	/**
+	 * Quit client and close the connection
+	 */
+	public void quit() {
+		adapter.outputToTextArea("[Client]: Attempting to quit...\n");
+		try {
+			rmi.stopRMI();
+		} catch (Exception e) {
+			adapter.outputToTextArea("[Client Error]: Can not stop RMI!\n");
+		}
+		System.exit(0);
+	}
+}

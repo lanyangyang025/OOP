@@ -1,0 +1,34 @@
+Description :
+
+This simple animate application can show different ball moving with different moving pattern in the center canvas.
+
+There are 8 different strategies you can choose:
+
+1) Straight: the ball will move straightly in the center canvas
+2) Color: the ball will change its color randomly when moving
+3) Breathing: the ball will change its radius when moving
+4) Curve: the ball will change the turning direction when moving
+5) Drunken: the ball will move randomly every 5 ticks as if it's drunken, but gradually move from upper left to bottom right
+6) Swing: the ball will swing along one direction while move normally along the other direction
+7) Wander: the ball will move completely randomly
+8) Magic: the ball will move in a spiral route periodically and increase/decrease its speed
+
+
+Operation steps[1]:
+1) Type the name of a strategy into the text field on the left.  See the list below for the available strategies above .  
+2) Clicking the "Add to Lists" button will then add it to both the drop lists.
+3) "Make Selected Ball" will make a ball with the strategy selected on the top drop list.
+4) "Combine!" will dynamically create a strategy that is the combination of the strategies selected on top and bottom lists. 
+5) The new strategy is placed back into both drop lists and can be used again for combining. For instance, add then combine "Curve" and "Breathing" to make a ball that curves and breathes.
+6) "Make Switcher" will make a ball, initially, ones that go straight.  
+7) Clicking "Switch!" will cause all Switcher balls ever made to switch behaviors to whatever is the selected strategy on the top drop list. 
+8) Switcher balls made later will have the same behavior as whatever the previously made Switchers have.
+9) By clicking the "Clear All" button in the north panel, it will remove all the current balls from the main canvas.
+
+
+
+References:
+[1]Composition-based Ballworld Demo
+ https://www.clear.rice.edu/comp504/f17/demos/ballworld_compose/index.html
+
+Ye Wang & Dai Li

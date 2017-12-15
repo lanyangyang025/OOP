@@ -1,0 +1,26 @@
+package strategy;
+
+import java.awt.Color;
+
+import ball.Ball;
+import util.Randomizer;
+
+/**
+ * a strategy of changing the ball's color
+ * @author Ye Wang
+ * @author Dai Li
+ *
+ */
+public class ColorStrategy extends IUpdateStrategy {
+
+	/**
+	 * change the color of the ball
+	 * @param ball the ball under operation
+	 */
+	@Override
+	public void updateState(Ball ball) {
+		Color newColor = Randomizer.singleton.randomColor();
+		ball.setColor(newColor);
+	}
+
+}

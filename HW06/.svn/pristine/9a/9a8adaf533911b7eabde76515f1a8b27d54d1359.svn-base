@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<com.yattasolutions.uml.diagrams.classifier:ClassDiagram xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:com.yattasolutions.diagrams="http://ns.yatta-solutions.com/umllab/diagrams/1.1.0" xmlns:com.yattasolutions.uml.diagrams.classifier="http://ns.yatta-solutions.com/umllab/diagrams/classifier/1.1.0" xmi:id="_YuNYALEXEeeP95al6XTTTg">
+  <modelElement href="MusicController.uml#_YtAeILEXEeeP95al6XTTTg"/>
+  <edges xsi:type="com.yattasolutions.diagrams:ConnectionVisual" xmi:id="_aLvtAbEXEeeP95al6XTTTg" targetItem="_aL1zqbEXEeeP95al6XTTTg" sourceItem="_aLvtALEXEeeP95al6XTTTg"/>
+  <edges xsi:type="com.yattasolutions.diagrams:ConnectionVisual" xmi:id="_aLwUEbEXEeeP95al6XTTTg" targetItem="_aL1zt7EXEeeP95al6XTTTg" sourceItem="_aLwUELEXEeeP95al6XTTTg"/>
+  <edges xsi:type="com.yattasolutions.diagrams:ConnectionVisual" xmi:id="_aLwUE7EXEeeP95al6XTTTg" targetItem="_aL1zvbEXEeeP95al6XTTTg" sourceItem="_aLwUErEXEeeP95al6XTTTg"/>
+  <edges xsi:type="com.yattasolutions.diagrams:ConnectionVisual" xmi:id="_aLw7IbEXEeeP95al6XTTTg" targetItem="_aL1zwLEXEeeP95al6XTTTg" sourceItem="_aLw7ILEXEeeP95al6XTTTg"/>
+  <edges xsi:type="com.yattasolutions.uml.diagrams.classifier:AssociationVisual" xmi:id="_aL0lgLEXEeeP95al6XTTTg" source="_aL1zqbEXEeeP95al6XTTTg">
+    <modelElement href="MusicController.uml#_Z5dDIbEXEeeP95al6XTTTg"/>
+    <stereotypes xmi:id="_aL0lgbEXEeeP95al6XTTTg" name="Reference">
+      <modelElement href="MusicController.uml#_Z5dqMLEXEeeP95al6XTTTg"/>
+    </stereotypes>
+    <nameVisual xmi:id="_aL0lgrEXEeeP95al6XTTTg" text=""/>
+    <sourceRole xmi:id="_aL0lg7EXEeeP95al6XTTTg" aggregationKind="NONE" name="">
+      <modelElement href="MusicController.uml#_Z5dDIrEXEeeP95al6XTTTg"/>
+      <visibility xmi:id="_aL0lhLEXEeeP95al6XTTTg" label="+"/>
+      <cardinality xmi:id="_aL0lhbEXEeeP95al6XTTTg" label="1" max="1" min="1"/>
+    </sourceRole>
+    <targetRole xmi:id="_aL0lhrEXEeeP95al6XTTTg" aggregationKind="NONE" name="musicPlayerModel" navigable="true">
+      <modelElement href="MusicController.uml#_Z3q6cLEXEeeP95al6XTTTg"/>
+      <stereotypes xmi:id="_bO5zILEXEeeP95al6XTTTg" name="LegacyStyledElement"/>
+      <visibility xmi:id="_aL0lh7EXEeeP95al6XTTTg" label="-"/>
+      <cardinality xmi:id="_aL0liLEXEeeP95al6XTTTg" label="1" max="1" min="1"/>
+    </targetRole>
+  </edges>
+  <edges xsi:type="com.yattasolutions.uml.diagrams.classifier:AssociationVisual" xmi:id="_aL1zoLEXEeeP95al6XTTTg" source="_aL1zqbEXEeeP95al6XTTTg">
+    <modelElement href="MusicController.uml#_Z5dqMbEXEeeP95al6XTTTg"/>
+    <stereotypes xmi:id="_aL1zobEXEeeP95al6XTTTg" name="Reference">
+      <modelElement href="MusicController.uml#_Z5eRQLEXEeeP95al6XTTTg"/>
+    </stereotypes>
+    <nameVisual xmi:id="_aL1zorEXEeeP95al6XTTTg" text=""/>
+    <sourceRole xmi:id="_aL1zo7EXEeeP95al6XTTTg" aggregationKind="NONE" name="">
+      <modelElement href="MusicController.uml#_Z5dqMrEXEeeP95al6XTTTg"/>
+      <visibility xmi:id="_aL1zpLEXEeeP95al6XTTTg" label="+"/>
+      <cardinality xmi:id="_aL1zpbEXEeeP95al6XTTTg" label="1" max="1" min="1"/>
+    </sourceRole>
+    <targetRole xmi:id="_aL1zprEXEeeP95al6XTTTg" aggregationKind="NONE" name="musicPlayerView" navigable="true">
+      <modelElement href="MusicController.uml#_Z3rhgLEXEeeP95al6XTTTg"/>
+      <stereotypes xmi:id="_bO4lALEXEeeP95al6XTTTg" name="Generics"/>
+      <stereotypes xmi:id="_bO5MELEXEeeP95al6XTTTg" name="LegacyStyledElement"/>
+      <visibility xmi:id="_aL1zp7EXEeeP95al6XTTTg" label="-"/>
+      <cardinality xmi:id="_aL1zqLEXEeeP95al6XTTTg" label="1" max="1" min="1"/>
+    </targetRole>
+  </edges>
+  <nodes xsi:type="com.yattasolutions.diagrams:CommentVisual" xmi:id="_aLvtALEXEeeP95al6XTTTg" sourceConnectionVisual="_aLvtAbEXEeeP95al6XTTTg" text="@author Alexander Hansen&#xD;&#xA;The Controller class" item="_aL1zqbEXEeeP95al6XTTTg">
+    <modelElement href="MusicController.uml#_Z4_JELEXEeeP95al6XTTTg"/>
+  </nodes>
+  <nodes xsi:type="com.yattasolutions.diagrams:CommentVisual" xmi:id="_aLwUELEXEeeP95al6XTTTg" sourceConnectionVisual="_aLwUEbEXEeeP95al6XTTTg" text="Controller constructor builds the system" item="_aL1zt7EXEeeP95al6XTTTg">
+    <modelElement href="MusicController.uml#_Z4_JEbEXEeeP95al6XTTTg"/>
+  </nodes>
+  <nodes xsi:type="com.yattasolutions.diagrams:CommentVisual" xmi:id="_aLwUErEXEeeP95al6XTTTg" sourceConnectionVisual="_aLwUE7EXEeeP95al6XTTTg" text="Start the system" item="_aL1zvbEXEeeP95al6XTTTg">
+    <modelElement href="MusicController.uml#_Z4_JErEXEeeP95al6XTTTg"/>
+  </nodes>
+  <nodes xsi:type="com.yattasolutions.diagrams:CommentVisual" xmi:id="_aLw7ILEXEeeP95al6XTTTg" sourceConnectionVisual="_aLw7IbEXEeeP95al6XTTTg" text="Launch the application.&#xD;&#xA;&#x9; * @param args Arguments given by the system or command line." item="_aL1zwLEXEeeP95al6XTTTg">
+    <modelElement href="MusicController.uml#_Z4_wILEXEeeP95al6XTTTg"/>
+  </nodes>
+  <nodes xsi:type="com.yattasolutions.uml.diagrams.classifier:ClassifierVisual" xmi:id="_aL1zqbEXEeeP95al6XTTTg" comments="_aLvtALEXEeeP95al6XTTTg" targetConnectionVisual="_aLvtAbEXEeeP95al6XTTTg" name="MusicPlayerController" associationsOut="_aL0lgLEXEeeP95al6XTTTg _aL1zoLEXEeeP95al6XTTTg">
+    <modelElement href="MusicController.uml#_ZpkNALEXEeeP95al6XTTTg"/>
+    <visualProperties xmi:id="_aL1zqrEXEeeP95al6XTTTg" position="30.0,30.0"/>
+    <visibility xmi:id="_aL1zq7EXEeeP95al6XTTTg" label="+"/>
+    <attributes xmi:id="_aL1zrLEXEeeP95al6XTTTg" name="musicPlayerModel">
+      <modelElement href="MusicController.uml#_Z3q6cLEXEeeP95al6XTTTg"/>
+      <stereotypes xmi:id="_aL1zrbEXEeeP95al6XTTTg" name="LegacyStyledElement">
+        <modelElement href="MusicController.uml#_Z3q6cbEXEeeP95al6XTTTg"/>
+      </stereotypes>
+      <visibility xmi:id="_aL1zrrEXEeeP95al6XTTTg" label="-"/>
+      <cardinality xmi:id="_aL1zr7EXEeeP95al6XTTTg" label="1" max="1" min="1"/>
+      <type xmi:id="_aL1zsLEXEeeP95al6XTTTg" name="MusicPlayerModel">
+        <modelElement href="MusicController.uml#_ZptW8LEXEeeP95al6XTTTg"/>
+      </type>
+    </attributes>
+    <attributes xmi:id="_aL1zsbEXEeeP95al6XTTTg" name="musicPlayerView">
+      <modelElement href="MusicController.uml#_Z3rhgLEXEeeP95al6XTTTg"/>
+      <stereotypes xmi:id="_aL1zsrEXEeeP95al6XTTTg" name="Generics">
+        <modelElement href="MusicController.uml#_Z3sIkLEXEeeP95al6XTTTg"/>
+      </stereotypes>
+      <stereotypes xmi:id="_aL1zs7EXEeeP95al6XTTTg" name="LegacyStyledElement">
+        <modelElement href="MusicController.uml#_Z3sIkbEXEeeP95al6XTTTg"/>
+      </stereotypes>
+      <visibility xmi:id="_aL1ztLEXEeeP95al6XTTTg" label="-"/>
+      <cardinality xmi:id="_aL1ztbEXEeeP95al6XTTTg" label="1" max="1" min="1"/>
+      <type xmi:id="_aL1ztrEXEeeP95al6XTTTg" name="MusicPlayerView">
+        <modelElement href="MusicController.uml#_Zs8RILEXEeeP95al6XTTTg"/>
+      </type>
+    </attributes>
+    <operations xmi:id="_aL1zt7EXEeeP95al6XTTTg" comments="_aLwUELEXEeeP95al6XTTTg" targetConnectionVisual="_aLwUEbEXEeeP95al6XTTTg" name="MusicPlayerController">
+      <modelElement href="MusicController.uml#_ZpmpQLEXEeeP95al6XTTTg"/>
+      <keywords xmi:id="_aL1zuLEXEeeP95al6XTTTg" keyword="create"/>
+      <visibility xmi:id="_aL1zubEXEeeP95al6XTTTg" label="+"/>
+      <cardinality xmi:id="_aL1zurEXEeeP95al6XTTTg" label="1" max="1" min="1"/>
+      <outParameters xmi:id="_aL1zu7EXEeeP95al6XTTTg">
+        <modelElement href="MusicController.uml#_ZpnQULEXEeeP95al6XTTTg"/>
+        <type xmi:id="_aL1zvLEXEeeP95al6XTTTg" name="MusicPlayerController">
+          <modelElement href="MusicController.uml#_ZpkNALEXEeeP95al6XTTTg"/>
+        </type>
+      </outParameters>
+    </operations>
+    <operations xmi:id="_aL1zvbEXEeeP95al6XTTTg" comments="_aLwUErEXEeeP95al6XTTTg" targetConnectionVisual="_aLwUE7EXEeeP95al6XTTTg" name="start">
+      <modelElement href="MusicController.uml#_ZpnQUbEXEeeP95al6XTTTg"/>
+      <visibility xmi:id="_aL1zvrEXEeeP95al6XTTTg" label="+"/>
+      <cardinality xmi:id="_aL1zv7EXEeeP95al6XTTTg" label="1" max="1" min="1"/>
+    </operations>
+    <operations xmi:id="_aL1zwLEXEeeP95al6XTTTg" comments="_aLw7ILEXEeeP95al6XTTTg" targetConnectionVisual="_aLw7IbEXEeeP95al6XTTTg" name="main" staticOperation="true">
+      <modelElement href="MusicController.uml#_Zpn3YLEXEeeP95al6XTTTg"/>
+      <visibility xmi:id="_aL1zwbEXEeeP95al6XTTTg" label="+"/>
+      <cardinality xmi:id="_aL1zwrEXEeeP95al6XTTTg" label="1" max="1" min="1"/>
+      <parameters xmi:id="_aL1zw7EXEeeP95al6XTTTg" name="args">
+        <modelElement href="MusicController.uml#_Zpn3YbEXEeeP95al6XTTTg"/>
+        <cardinality xmi:id="_aL1zxLEXEeeP95al6XTTTg" label="1..*" max="-1" min="1"/>
+        <type xmi:id="_aL1zxbEXEeeP95al6XTTTg" name="String">
+          <modelElement href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+        </type>
+      </parameters>
+    </operations>
+  </nodes>
+</com.yattasolutions.uml.diagrams.classifier:ClassDiagram>

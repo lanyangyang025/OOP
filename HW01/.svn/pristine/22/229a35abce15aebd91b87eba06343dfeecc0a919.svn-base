@@ -1,0 +1,27 @@
+package shape;
+
+import java.awt.Color;
+import java.awt.Graphics;
+
+public class Arc {
+	private int height = 10;
+	private int width = 10;
+	private int startAngle = 0;
+	private int arcAngle = 180;
+
+	public Arc(int x, int y, int width, int height, int startAngle, int arcAngle, Color color) {
+		this.x_location = x;
+		this.y_location = y;
+		this.height = height;
+		this.width = width;
+		this.startAngle = startAngle;
+		this.arcAngle = arcAngle;
+		this.color = color;
+	}
+
+	public void paint(Graphics g) {
+		g.setColor(color); // Set the color to use when drawing
+		g.fillArc(x_location, y_location, width, height, startAngle, arcAngle);
+	}
+
+}

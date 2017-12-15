@@ -1,0 +1,20 @@
+package strategy;
+
+import model.Ball;
+import model.IUpdateStrategy;
+import util.Randomizer;
+import util.SineMaker;
+
+public class BreathingStrategy implements IUpdateStrategy{
+	double min = -Randomizer.Singleton.randomDouble(3, 6);
+	double max = -min;
+	double delta = Randomizer.Singleton.randomDouble(Math.PI / 10, Math.PI / 5);
+	SineMaker sine = new SineMaker(min, max, delta);
+
+	@Override
+	public void updateState(Ball ball) {
+		// TODO Auto-generated method stub
+		ball.radius += sine.getIntVal();
+	}
+
+}

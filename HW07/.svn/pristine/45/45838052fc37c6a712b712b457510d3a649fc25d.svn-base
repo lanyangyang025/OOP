@@ -1,0 +1,84 @@
+package model;
+
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
+import java.util.function.Consumer;
+
+import provided.compute.IRemoteTaskViewAdapter;
+import provided.compute.ITask;
+import provided.compute.ICompute;
+import provided.compute.ILocalTaskViewAdapter;
+
+public class ComputeImpl implements ICompute{
+	
+
+	private Consumer<String> outputCmd;
+
+	IRemoteTaskViewAdapter engineAdapterstub;
+
+	
+	public ComputeImpl(Consumer<String> outputCmd) {
+		this.outputCmd = outputCmd;
+		System.out.println(outputCmd);
+	}
+	
+	
+	
+	private ILocalTaskViewAdapter engineTask = new ILocalTaskViewAdapter() {
+		public void append(String s) {
+			outputCmd.accept(s);
+		}
+	};
+
+	private IRemoteTaskViewAdapter clientTVAStub;
+	
+	
+	
+	@Override
+	public <T> T executeTask(ITask<T> t) throws RemoteException {
+		// TODO Auto-generated method stub
+		T res = null;
+		try {
+			t.setTaskViewAdapter(engineTask);
+			outputCmd.accept("[ComputeEngine.executeTask()] " +"Executing task:" + t);
+			res = t.execute();
+			outputCmd.accept("[ComputeEngine.executeTask()] " +"Task result =" + res);
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return res;
+	}
+	
+	@Override
+	public IRemoteTaskViewAdapter setTextAdapter(IRemoteTaskViewAdapter clientTVAStub) throws RemoteException {
+		this.clientTVAStub = clientTVAStub;
+		
+		engineTask.append("[ComputerEngine.setTextAdapter()] "+"Got text adapter: " + clientTVAStub);
+
+		IRemoteTaskViewAdapter engineAdapter = new IRemoteTaskViewAdapter() {
+			public void append(String s) {
+				engineTask.append("[Client] " + s);
+			}
+		};
+
+		
+		try {
+			engineAdapterstub = (IRemoteTaskViewAdapter) UnicastRemoteObject
+					.exportObject(engineAdapter, IRemoteTaskViewAdapter.BOUND_PORT_SERVER);
+			return engineAdapterstub;   // return the remote view adapter
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}	
+	
+	public void sendMsg(String text) {
+		engineTask.append("[Sending msg to connected remote client]" +" Sending msg to connected remote client." 
+				+" (msg =" +text +")");
+		try {
+			clientTVAStub.append(text);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+	}
+}

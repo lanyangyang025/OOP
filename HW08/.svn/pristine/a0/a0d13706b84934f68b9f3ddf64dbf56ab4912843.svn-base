@@ -1,0 +1,68 @@
+package controller;
+
+import java.io.Serializable;
+import java.rmi.RemoteException;
+import java.util.Collection;
+
+import common.DataPacketChatRoom;
+import common.IReceiver;
+import model.ChatRoom;
+import model.IMini2ViewAdapter;
+import view.ChatroomView;
+import view.IMini2ModelAdapter;
+
+public class MiniControl{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8268708240983852273L;
+	private ChatroomView miniView;
+	private ChatRoom room;
+	
+	public MiniControl(ChatRoom chatroom, IReceiver receiver) {
+
+		room = chatroom;
+		
+		room.setMiniView(new IMini2ViewAdapter() {
+			
+			public void append(String text) {
+				miniView.outputToTextArea(text);
+			}
+
+			@Override
+			public void addUserList(IReceiver receiver) {
+				// TODO Auto-generated method stub
+				try {
+					miniView.addUserList(receiver);
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+
+			@Override
+			public ChatroomView getRoomView() {
+				// TODO Auto-generated method stub
+				return miniView;
+			}			
+		});
+		
+		miniView = new ChatroomView(new IMini2ModelAdapter() {
+
+			
+			public String getName() {
+				return room.getName();
+			}
+
+			@Override
+			public void sendDataPacket(String text, IReceiver receiver) {
+				// TODO Auto-generated method stub
+				room.sendPacket(new DataPacketChatRoom<String>(String.class, text, receiver));
+			}
+		}, receiver);
+		
+	}
+	public ChatroomView getChatView() {
+		return miniView;
+	}
+}

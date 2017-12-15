@@ -1,0 +1,478 @@
+/**
+ * 
+ */
+package yl128_pg23.model;
+
+import java.awt.Component;
+import java.io.File;
+import java.io.IOException;
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.UUID;
+import java.nio.file.Files;
+
+import javax.swing.ImageIcon;
+
+import common.DataPacketCR;
+import common.DataPacketCRAlgoCmd;
+import common.ICRCmd2ModelAdapter;
+import common.ICRMessageType;
+import common.datatype.IRequestCmdType;
+import common.datatype.chatroom.IAddReceiverType;
+import common.datatype.chatroom.ICRInstallCmdType;
+import common.datatype.chatroom.IRemoveReceiverType;
+import common.IChatRoom;
+import common.IComponentFactory;
+import common.IReceiver;
+import provided.datapacket.DataPacketAlgo;
+import provided.mixedData.IMixedDataDictionary;
+import provided.mixedData.MixedDataDictionary;
+import provided.mixedData.MixedDataKey;
+import yl128_pg23.game.server.cmd.AddGameMessageCmd;
+import yl128_pg23.game.server.cmd.FindTreaMessageCmd;
+import yl128_pg23.game.server.cmd.GameChatMessageCmd;
+import yl128_pg23.game.server.cmd.PlaceTreaMessageCmd;
+import yl128_pg23.game.server.cmd.PlayerReadyMessageCmd;
+import yl128_pg23.game.server.cmd.ShowResMessageCmd;
+import yl128_pg23.game.server.cmd.StartGameMessageCmd;
+import yl128_pg23.game.server.cmd.StartPlaceMessageCmd;
+import yl128_pg23.game.server.datatype.AddGameMessageType;
+import yl128_pg23.game.server.datatype.FindTreaMessageType;
+import yl128_pg23.game.server.datatype.GameChatMessageType;
+import yl128_pg23.game.server.datatype.PlaceTreaMessageType;
+import yl128_pg23.game.server.datatype.PlayerReadyMessageType;
+import yl128_pg23.game.server.datatype.ShowResMessageType;
+import yl128_pg23.game.server.datatype.StartGameMessageType;
+import yl128_pg23.game.server.datatype.StartPlaceMessageType;
+import yl128_pg23.model.cmd.CmdCommAddReceiver;
+import yl128_pg23.model.cmd.CmdCommInstallCmd;
+import yl128_pg23.model.cmd.CmdCommRemoveReceiver;
+import yl128_pg23.model.cmd.CmdCommRequestCmd;
+import yl128_pg23.model.cmd.CmdFile;
+import yl128_pg23.model.cmd.CmdGameGlobalText;
+import yl128_pg23.model.cmd.CmdImage;
+import yl128_pg23.model.cmd.CmdText;
+import yl128_pg23.model.datatype.IImageIconType;
+import yl128_pg23.model.datatype.IStringType;
+import yl128_pg23.model.datatype.GameMsgGlobalType;
+import yl128_pg23.model.datatype.IFileType;
+
+/**
+ * Chat room
+ * @author Yiqing Lu, Peishen Guo
+ *
+ */
+public class ChatRoom implements IChatRoom {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5207620380615489899L;
+	/**
+	 * 
+	 */
+
+	private UUID uuid;
+	private String CRName;
+	private List<IReceiver> conns;
+	private IReceiver self;
+	private DataPacketAlgo<String, String> cmdMngr;
+	private transient IChatWindowAdapter cwadpt;
+	private transient ICRCmd2ModelAdapter c2madpt;
+	private transient IMixedDataDictionary mixDict = new MixedDataDictionary();
+
+	/**
+	 * @param cmdMngr2 
+	 * @param string
+	 */
+	public ChatRoom(String name, ChatRoomManager crMngr) {
+		this.uuid = UUID.randomUUID();
+		this.CRName = name;
+		conns = new ArrayList<IReceiver>();
+	}
+
+	public ChatRoom(IChatRoom cr, ChatRoomManager crMngr) {
+		this.uuid = cr.getUUID();
+		this.CRName = cr.getName();
+		conns = new ArrayList<IReceiver>();
+		Collection<IReceiver> tmp = cr.getIReceiverStubs();
+		for (IReceiver recv : tmp) {
+			conns.add(recv);
+		}
+	}
+
+	public void addConn(IReceiver conn) {
+		conns.add(conn);
+		cwadpt.updateUser(conns);
+	}
+
+	public void newConn(IReceiver conn) {
+		for (IReceiver c : conns) {
+			try {
+				c.receive(new DataPacketCR<IAddReceiverType>(IAddReceiverType.class, new IAddReceiverType() {
+					/**
+					 * 
+					 */
+					private static final long serialVersionUID = -8410469469679402080L;
+
+					@Override
+					public IReceiver getReceiverStub() {
+						return self;
+					}
+				}, self));
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	public void sendDataPacket(String dpType, String text) {
+
+		for (IReceiver conn : conns) {
+			try {
+				conn.receive(new DataPacketCR<IStringType>(IStringType.class, new IStringType("[" + dpType + " from " + self.getUserStub().getName() + "]"), self));
+				System.out.println(self.getUserStub().getName());
+				switch (dpType) {
+				case "Text":
+					conn.receive(new DataPacketCR<IStringType>(IStringType.class, new IStringType(text), self));
+					break;
+				case "Image":
+					conn.receive(new DataPacketCR<IImageIconType>(IImageIconType.class, new IImageIconType(new ImageIcon("./image/"+text)), self));
+					break;
+				case "File":
+					File file = new File("./file/"+text);
+					byte[][] data = new byte[2][];
+					data[0] = file.getName().getBytes();
+					data[1] = Files.readAllBytes(file.toPath());
+					conn.receive(new DataPacketCR<IFileType>(IFileType.class, new IFileType(data), self));
+					break;
+				}
+			} catch (IOException e) {
+
+				e.printStackTrace();
+			}
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see common.IChatRoom#getUUID()
+	 */
+	@Override
+	public UUID getUUID() {
+		return uuid;
+	}
+
+	/* (non-Javadoc)
+	 * @see common.IChatRoom#getCRName()
+	 */
+	@Override
+	public String getName() {
+		return CRName;
+	}
+
+	@Override
+	public String toString() {
+		return getName();
+	}
+
+	/* (non-Javadoc)
+	 * @see common.IChatRoom#getConnList()
+	 */
+	@Override
+	public List<IReceiver> getIReceiverStubs() {
+		return conns;
+	}
+
+	/**
+	 * @param conn
+	 */
+	public void removeConn(UUID uuid) {
+		IReceiver target = null;
+		for (IReceiver c : conns) {
+
+			try {
+				if (c.getUUID().equals(uuid)) {
+					target = c;
+					break;
+				}
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
+		}
+		if (target != null)
+			conns.remove(target);
+		cwadpt.updateUser(conns);
+	}
+
+	public void leave() {
+		for (IReceiver c : conns) {
+			if (c != self) {
+				try {
+					//c.removeConnection(self.getUUID());
+					c.receive(
+							new DataPacketCR<IRemoveReceiverType>(IRemoveReceiverType.class, new IRemoveReceiverType() {
+
+								private static final long serialVersionUID = 8406497453455646104L;
+
+								@Override
+								public IReceiver getReceiverStub() {
+									return self;
+								}
+
+							}, self));
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
+	/**
+	 * @param conn
+	 */
+	public void setSelf(IReceiver conn) {
+		self = conn;
+		newConn(self);
+		conns.add(conn);
+		initC2MAdpt();
+		initCmdMngr();
+		cwadpt.updateUser(conns);
+	}
+
+	public DataPacketAlgo<String, String> getCmdMngr() {
+		return cmdMngr;
+	}
+
+	/**
+	 * @param iChatWindowAdapter
+	 */
+	public void setAdpt(IChatWindowAdapter cwadpt) {
+		this.cwadpt = cwadpt;
+
+	}
+
+	/* (non-Javadoc)
+	 * @see common.IChatRoom#sendPacket(common.DataPacketChatRoom)
+	 */
+	@Override
+	public <T extends ICRMessageType> void sendPacket(DataPacketCR<T> data) {
+		for (IReceiver recv : conns) {
+			try {
+				recv.receive(data);
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see common.IChatRoom#addIReceiverStubLocally(common.IReceiver)
+	 */
+	public boolean addIReceiverStub(IReceiver receiver) {
+		conns.add(receiver);
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see common.IChatRoom#removeIReceiverStubLocally(common.IReceiver)
+	 */
+	public boolean removeIReceiverStub(IReceiver receiver) {
+		conns.remove(receiver);
+		return false;
+	}
+
+	private void initC2MAdpt() {
+		c2madpt = new ICRCmd2ModelAdapter() {
+
+			@Override
+			public void appendMsg(String text, String name) {
+				cwadpt.updateMsg(text);
+
+			}
+
+			@Override
+			public void buildScrollableComponent(IComponentFactory fac, String label) {
+				Component c = fac.makeComponent();
+				cwadpt.popWindow(c);
+			}
+
+			@Override
+			public void buildNonScrollableComponent(IComponentFactory fac, String label) {
+				Component c = fac.makeComponent();
+				cwadpt.popWindow(c);
+			}
+
+
+			@Override
+			public String getName() {
+				// TODO Auto-generated method stub
+				try {
+					return self.getUserStub().getName();
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					return null;
+				}
+			}
+
+			@Override
+			public <T extends ICRMessageType> void sendTo(IReceiver target, Class<T> id, T data) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public <T extends ICRMessageType> void sendToChatRoom(Class<T> id, T data) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public <T> T put(MixedDataKey<T> key, T value) {
+				// TODO Auto-generated method stub
+				mixDict.put(key, value);
+				return value;
+			}
+
+			@Override
+			public <T> T get(MixedDataKey<T> key) {
+				// TODO Auto-generated method stub
+				return mixDict.get(key);
+			}
+
+		};
+	}
+
+	private void initCmdMngr() {
+
+		//cmdMngr = new DataPacketAlgo<String, String>(new CmdDefault());
+		cmdMngr = new DataPacketAlgo<String, String>(new DataPacketCRAlgoCmd<ICRMessageType>() {
+
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 6784895235535334323L;
+
+			@Override
+			public String apply(Class<?> index, DataPacketCR<ICRMessageType> host, String... params) {
+				
+				try {
+					host.getSender().receive(new DataPacketCR<IRequestCmdType>(IRequestCmdType.class, new IRequestCmdType() {
+
+								private static final long serialVersionUID = 2901583931947226654L;
+
+								@Override
+								public Class<?> getCmdId() {
+									return host.getData().getClass();
+								}
+
+							}, self));
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				}
+				//return "Default case called. data = "+ x;
+				return "DEFAULT";
+			}
+
+			@Override
+			public void setCmd2ModelAdpt(ICRCmd2ModelAdapter cmd2ModelAdpt) {
+				// TODO Auto-generated method stub
+				c2madpt = cmd2ModelAdpt;
+			}
+
+		});
+		cmdMngr.setCmd(IAddReceiverType.class, new CmdCommAddReceiver(this));
+		cmdMngr.setCmd(IRemoveReceiverType.class, new CmdCommRemoveReceiver(this));
+		cmdMngr.setCmd(IRequestCmdType.class, new CmdCommRequestCmd(cmdMngr, self, c2madpt));
+		cmdMngr.setCmd(ICRInstallCmdType.class, new CmdCommInstallCmd(cmdMngr, self, c2madpt));
+
+		cmdMngr.setCmd(IStringType.class, new CmdText(c2madpt));
+
+		cmdMngr.setCmd(IImageIconType.class, new CmdImage(c2madpt));
+		cmdMngr.setCmd(IFileType.class, new CmdFile(c2madpt));
+		cmdMngr.setCmd(AddGameMessageType.class, new AddGameMessageCmd(this, c2madpt));
+		cmdMngr.setCmd(GameMsgGlobalType.class, new CmdGameGlobalText(c2madpt));
+		cmdMngr.setCmd(PlayerReadyMessageType.class, new PlayerReadyMessageCmd(c2madpt));
+		cmdMngr.setCmd(GameChatMessageType.class, new GameChatMessageCmd(c2madpt));
+		cmdMngr.setCmd(StartPlaceMessageType.class, new StartPlaceMessageCmd(c2madpt));
+		cmdMngr.setCmd(PlaceTreaMessageType.class, new PlaceTreaMessageCmd(c2madpt));
+		cmdMngr.setCmd(StartGameMessageType.class, new StartGameMessageCmd(c2madpt));
+		cmdMngr.setCmd(FindTreaMessageType.class, new FindTreaMessageCmd(c2madpt));
+		cmdMngr.setCmd(ShowResMessageType.class, new ShowResMessageCmd(c2madpt));
+		/*
+		cmdMngr.setCmd(IAddReceiverType.class, new DataPacketAlgoCmd<IAddReceiverType>(){
+			private static final long serialVersionUID = -5473442460103576115L;
+			@Override
+			public void setCmd2ModelAdpt(ICmd2ModelAdapter cmd2ModelAdpt) {
+				
+			}
+			@Override
+			public String apply(Class<?> index, DataPacketChatRoom<IAddReceiverType> host, String... params) {
+				//cmd2ModelAdpt.appendMsg("Case IAddReceiver " + host.getData());
+				//cmd2ModelAdpt.addReceiver(host.getData().getReceiverStub());
+				//chatRoom.addIReceiverStubLocally(host.getData().getReceiverStub());
+				try {
+					crMngr.getCR(host.getSender().getUUID()).addConn(host.getData().getReceiverStub());
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				return null;
+			}
+		});
+		
+		cmdMngr.setCmd(IRemoveReceiverType.class, new DataPacketAlgoCmd<IRemoveReceiverType>(){
+			private static final long serialVersionUID = -5473442460103576115L;
+			@Override
+			public void setCmd2ModelAdpt(ICmd2ModelAdapter cmd2ModelAdpt) {
+				
+			}
+			@Override
+			public String apply(Class<?> index, DataPacketChatRoom<IRemoveReceiverType> host, String... params) {
+				//cmd2ModelAdpt.appendMsg("Case IAddReceiver " + host.getData());
+				//cmd2ModelAdpt.addReceiver(host.getData().getReceiverStub());
+				//chatRoom.addIReceiverStubLocally(host.getData().getReceiverStub());
+				try {
+					crMngr.getCR(host.getSender().getUUID()).removeConn(host.getData().getReceiverStub().getUUID());
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				}
+				return null;
+			}
+		});
+		*/
+	}
+
+	public void addGame() {
+		// TODO Auto-generated method stub
+		for (IReceiver conn : conns) {
+			new Thread(() -> {
+				try {
+					conn.receive(new DataPacketCR<AddGameMessageType>(AddGameMessageType.class,
+							new AddGameMessageType(conn), self));
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				}
+			}).start();
+		}
+	}
+
+	public void sendMsgGlobal(String text) {
+		// TODO Auto-generated method stub
+		
+		for (IReceiver conn : conns) {
+			new Thread(() -> {
+				try {
+					String data = text;
+					conn.receive(new DataPacketCR<GameMsgGlobalType>(GameMsgGlobalType.class, new GameMsgGlobalType(data), self));
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				}
+			}).start();
+		}		
+	}
+
+}

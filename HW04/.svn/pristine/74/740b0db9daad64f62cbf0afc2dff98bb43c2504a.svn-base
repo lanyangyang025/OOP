@@ -1,0 +1,29 @@
+package strategy;
+
+import java.awt.Point;
+
+import ball.Ball;
+/**
+ * a strategy of magic route, spinning
+ * @author Ye Wang
+ * @author Yiqing Lu
+ */
+public class MagicStrategy extends IUpdateStrategy {
+	//counter resets every 361/0.01 time slice
+	private double count=0;
+	/**
+	 * Update the ball's velocity in a magical way
+	 */
+	@Override
+	public void updateState(Ball ball) {
+		// TODO Auto-generated method stub
+		double angle = (double) ((count += 0.01) % 361);
+		Point velocity = ball.getVelocity();
+		double x = velocity.x, y = velocity.y;
+		velocity.x = (int) (Math.round(x * Math.cos(angle)) - Math.round(y * Math.sin(angle)));
+		velocity.y = (int) (Math.round(y * Math.cos(angle)) + Math.round(x * Math.sin(angle)));
+		ball.setVelocity(velocity);
+		ball.setLoc(new Point(ball.getLoc().x + ball.getVelocity().x, ball.getLoc().y + ball.getVelocity().y));
+	}
+
+}

@@ -1,0 +1,68 @@
+package controller;
+
+import java.awt.EventQueue;
+
+import model.EngineModel;
+import model.IEngineViewAdapter;
+import view.EngineView;
+import view.IEngineModelAdapter;
+
+public class EngineControl {
+
+	private EngineModel model;
+	private EngineView view;
+	
+	
+	public EngineControl() {
+		view = new EngineView(new IEngineModelAdapter() {
+
+
+			@Override
+			public void quit() {
+				// TODO Auto-generated method stub
+				model.stop();
+			}
+
+			@Override
+			public void sendMsg() {
+				// TODO Auto-generated method stub
+				
+			}
+
+		});
+		
+		model = new EngineModel(new IEngineViewAdapter() {
+
+			@Override
+			public void outputToTextArea(String s) {
+				// TODO Auto-generated method stub
+				view.outputToTextArea(s);
+			}
+
+			
+		});
+		
+	}
+	
+	public void start(){
+		view.start();
+		model.start();
+	}
+
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() { 
+			public void run() {
+				try {
+					EngineControl controller = new EngineControl();
+					controller.start(); // start the system
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+	
+	
+	
+	
+}

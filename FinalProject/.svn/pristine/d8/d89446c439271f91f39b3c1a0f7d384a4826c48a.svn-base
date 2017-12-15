@@ -1,0 +1,224 @@
+package yl128_pg23.game.server.controller;
+
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+
+import gov.nasa.worldwind.geom.Position;
+
+import common.IReceiver;
+import yl128_pg23.game.map.IRightClickAction;
+import yl128_pg23.game.map.MapLayer;
+import yl128_pg23.game.server.model.IGameModel2ViewAdapter;
+import yl128_pg23.game.server.model.MapModel;
+import yl128_pg23.game.server.model.Place;
+import yl128_pg23.game.server.model.Team;
+import yl128_pg23.game.server.view.GameView;
+import yl128_pg23.game.server.view.IGameView2ModelAdapter;
+import yl128_pg23.model.ChatRoom;
+
+/**
+ * @author Yiqing Lu
+ *
+ */
+
+public class GameController {
+
+	private GameView _view;
+	private MapModel _model;
+	private IReceiver receiver;
+	private ChatRoom cr;
+
+	/**
+	 * game controller
+	 * @param receiver
+	 * @param cr
+	 */
+	public GameController(IReceiver receiver, ChatRoom cr) {
+		this.receiver = receiver;
+		this.cr = cr;
+		makeMapMVC();
+	}
+
+	public static String getGameId() {
+		return "1-2-3-4-5";
+	}
+
+	public static String getDes() {
+		return "yl128_pg23's discription";
+	}
+
+	public void makeMapMVC() {
+
+		_view = new GameView(new IGameView2ModelAdapter() {
+
+			@Override
+			public void sendMsgRoom(String text) {
+				// TODO Auto-generated method stub
+				_model.sendMsgRoom(text);
+			}
+
+			@Override
+			public void sendMsgGlobal(String text) {
+				// TODO Auto-generated method stub
+				cr.sendMsgGlobal(text);
+			}
+
+			@Override
+			public void sendReady(Team team) {
+				// TODO Auto-generated method stub
+				_model.getTeamReady(team);
+			}
+
+			@Override
+			public void startPlace() {
+				// TODO Auto-generated method stub
+				_model.startGame();
+			}
+
+			@Override
+			public void setStart() {
+				// TODO Auto-generated method stub
+				_model.setStart();
+			}
+
+			@Override
+			public void waitToStart() {
+				// TODO Auto-generated method stub
+				_model.waitToSTart();
+			}
+
+			@Override
+			public void sendPositions() {
+				// TODO Auto-generated method stub
+				_model.sendPlaces();
+			}
+
+		}, new IRightClickAction() {
+			public void apply(Position p) {
+				_model.click(p);
+			}
+		});
+		_model = new MapModel(new IGameModel2ViewAdapter() {
+
+			@Override
+			public void addPlace(Place p) {
+				// TODO Auto-generated method stub
+				_view.addPlace(p);
+			}
+
+			@Override
+			public void show(MapLayer layer) {
+				// TODO Auto-generated method stub
+				_view.addMapLayer(layer);
+			}
+
+			@Override
+			public void hide(MapLayer layer) {
+				// TODO Auto-generated method stub
+				_view.removeMapLayer(layer);
+			}
+
+			@Override
+			public void showTeam(Team team) {
+				// TODO Auto-generated method stub
+				_view.showTeam(team);
+			}
+
+			@Override
+			public void showTeamNum(Team team) {
+				// TODO Auto-generated method stub
+				_view.showTeamNum(team);
+			}
+
+			@Override
+			public void appendChatMsg(String text) {
+				// TODO Auto-generated method stub
+				_view.appendToTeamChat(text);
+			}
+
+			@Override
+			public void sendStart(Team team) {
+				// TODO Auto-generated method stub
+				_view.sendStart(team);
+			}
+
+			@Override
+			public void unableStart() {
+				// TODO Auto-generated method stub
+				_view.unableStart();
+			}
+
+			@Override
+			public void unableJoin(Team team) {
+				// TODO Auto-generated method stub
+				_view.unableJoin(team);
+			}
+
+			@Override
+			public void enableStart() {
+				// TODO Auto-generated method stub
+				_view.enableStart();
+			}
+
+			@Override
+			public int getPlaceNum(Team team) {
+				// TODO Auto-generated method stub
+				return _view.getPlaceNum(team);
+			}
+
+			@Override
+			public void unableFinish() {
+				// TODO Auto-generated method stub
+				_view.unableFinish();
+			}
+
+			@Override
+			public void sendTeamStart(Team team2) {
+				// TODO Auto-generated method stub
+				_view.sendTeamStart(team2);
+			}
+
+			@Override
+			public void close() {
+				// TODO Auto-generated method stub
+				new Thread() {
+					public void run() {
+						_view.dispose();
+					}
+				}.start();
+
+			}
+
+		}, receiver, cr);
+	}
+
+	public void start() {
+		_view.start();
+		_model.start();
+	}
+
+	/**
+	 * Run the given Runnable job on the main thread.
+	 * @param r   The Runnable job to run
+	 */
+	public void runJob(Runnable r) {
+		try {
+			bq.put(r); // Put job into the queue, blocking if out of space
+		} catch (InterruptedException e) {
+			System.out.println("runJob(): Exception putting job into blocking queue = " + e);
+			e.printStackTrace();
+		}
+	}
+
+	private BlockingQueue<Runnable> bq = new LinkedBlockingQueue<Runnable>(5); // May want larger or different type of blocking queue
+
+	public GameView getGameView() {
+		return _view;
+	}
+
+	public MapModel getGameModel() {
+		// TODO Auto-generated method stub
+		return _model;
+	}
+
+}

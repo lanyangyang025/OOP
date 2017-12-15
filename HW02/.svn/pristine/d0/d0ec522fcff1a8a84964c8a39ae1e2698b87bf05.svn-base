@@ -1,0 +1,13 @@
+package model.Balls;
+
+import java.awt.*;
+
+
+public class BallStraight extends ABall{
+
+	public BallStraight(Point origin, Color color, int radius, Point velocity, Container canvas) {
+		super(origin, color, radius, velocity, canvas);
+	}
+	
+	public void trace_ball() {};
+}

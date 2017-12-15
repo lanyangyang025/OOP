@@ -1,0 +1,79 @@
+/**
+ * 
+ */
+package yl128_pg23.model;
+
+import java.awt.Component;
+import java.util.List;
+import java.util.UUID;
+
+import common.IReceiver;
+
+/**
+ * Lobby controller
+ * @author Yiqing Lu, Peisheng Guo
+ *
+ */
+public class ChatRoomControl {
+
+	private ChatWindow cw;
+
+	public ChatRoomControl(ChatRoom cr) {
+		cr.setAdpt(new IChatWindowAdapter() {
+
+			@Override
+			public void updateMsg(String msgText) {
+				cw.updateMsg(msgText);
+
+			}
+
+			@Override
+			public void popWindow(Component c) {
+				cw.popWindow(c);
+			}
+
+			@Override
+			public void updateUser(List<IReceiver> conns) {
+				cw.updateUserList(conns);
+			}
+
+		});
+		cw = new ChatWindow(new IChatRoomAdapter() {
+
+			@Override
+			public UUID getUUID() {
+				return cr.getUUID();
+			}
+
+			@Override
+			public String getTitle() {
+				return cr.getName();
+			}
+
+			@Override
+			public void sendDataPacket(String type, String content) {
+				cr.sendDataPacket(type, content);
+
+			}
+
+			@Override
+			public void addGame() {
+				// TODO Auto-generated method stub
+				cr.addGame();
+			}
+
+		});
+	}
+
+	public void start() {
+		cw.start();
+	}
+
+	/**
+	 * @return The view of the chat room
+	 */
+	public ChatWindow getChatWindow() {
+		return cw;
+	}
+
+}

@@ -1,0 +1,91 @@
+package model;
+
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+import common.IChatRoom;
+import common.IReceiver;
+import common.IUser;
+import controller.MiniControl;
+import view.ChatroomView;
+
+public class ChatRoomImpl {
+
+	transient ArrayList<ChatRoom> room_list;
+	IUser user;
+	IModel2ViewAdapter adapter;
+
+	IReceiver receiver, receiverStub;
+
+	public ChatRoomImpl(IModel2ViewAdapter adapter, IUser user) {
+		room_list = new ArrayList<ChatRoom>();
+		this.user = user;
+		this.adapter = adapter;
+	}
+
+	/**
+	 * @return
+	 */
+	public List<ChatRoom> getChatRoomList() {
+		return room_list;
+	}
+
+	public void leaveRoom(IChatRoom chatroom) {
+		room_list.remove(chatroom);
+	}
+
+	public ChatroomView createChatRoom(ChatRoom new_chatroom, int USER_BOUND_PORT) {
+		// TODO Auto-generated method stub
+		try {
+			for (int i = 0; i < room_list.size(); i++) {
+				ChatRoom temp_room = room_list.get(i);
+				if (temp_room.getUUID().equals(new_chatroom.getUUID())) {
+					return null;
+				}
+			}
+
+			receiver = new Receiver(user, new_chatroom);
+			receiverStub = (IReceiver) UnicastRemoteObject.exportObject(receiver, USER_BOUND_PORT);
+
+			MiniControl miniControl = new MiniControl(new_chatroom, receiverStub);
+
+			ChatroomView roomView = miniControl.getChatView();
+
+			room_list.add(new_chatroom);
+			new_chatroom.initSet(receiverStub, new_chatroom.getIReceiverStubs());
+
+			for (IReceiver temp : new_chatroom.getIReceiverStubs()) {
+
+				roomView.addUserList(temp);
+			}
+
+			return roomView;
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public ChatRoom getChatRoom(UUID uuid) {
+		// TODO Auto-generated method stub
+		for (ChatRoom room : room_list) {
+			if (room.getUUID().equals(uuid)) {
+				return room;
+			}
+		}
+		return null;
+	}
+
+	public ChatroomView joinChatRoom(IChatRoom request_room, int USER_BOUND_PORT) {
+		// TODO Auto-generated method stub
+		ChatRoom new_chatroom = new ChatRoom(request_room);
+
+		return createChatRoom(new_chatroom, USER_BOUND_PORT);
+
+	}
+
+}

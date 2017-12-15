@@ -1,0 +1,17 @@
+package model.Balls;
+
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Point;
+import util.Randomizer;
+
+public class ColorChangingBall extends ABall {
+
+	public ColorChangingBall(Point origin, Color color, int radius, Point velocity, Container canvas) {
+		super(origin, color, radius, velocity, canvas);
+	}
+
+	public void trace_ball() {
+		this.color = Randomizer.Singleton.randomColor();
+	}
+}

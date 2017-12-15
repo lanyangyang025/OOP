@@ -1,0 +1,42 @@
+/**
+ * 
+ */
+package model.cmd;
+
+import java.rmi.RemoteException;
+import java.util.Collection;
+
+import common.DataPacketAlgoCmd;
+import common.DataPacketChatRoom;
+import common.IAddReceiverType;
+import common.IChatRoom;
+import common.ICmd2ModelAdapter;
+import model.ChatRoom;
+import model.ChatRoomImpl;
+
+
+public class AddReceiverAlgoCmd extends DataPacketAlgoCmd<IAddReceiverType> {
+
+	private transient ChatRoomImpl chatroomImpl;
+	public AddReceiverAlgoCmd(ChatRoomImpl chatroomImpl) {
+		this.chatroomImpl = chatroomImpl;
+	}
+
+	@Override
+	public void setCmd2ModelAdpt(ICmd2ModelAdapter cmd2ModelAdpt) {
+		
+	}
+	
+	@Override
+	public String apply(Class<?> index, DataPacketChatRoom<IAddReceiverType> host, String... params) {
+
+		try {	
+			ChatRoom room = chatroomImpl.getChatRoom(host.getSender().getUUID());	
+			room.addIReceiverStubLocally(host.getData().getReceiverStub());
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+}

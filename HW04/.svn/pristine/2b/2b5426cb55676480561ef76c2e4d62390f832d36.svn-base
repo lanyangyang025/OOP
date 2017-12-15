@@ -1,0 +1,18 @@
+package strategy;
+
+import ball.Ball;
+import util.Dispatcher;
+
+/**
+ * a strategy of keeping the ball's velocity
+ * @author Ye Wang
+ * @author Yiqing Lu
+ *
+ */
+public class StraightStrategy implements IUpdateStrategy {
+
+	public void updateState(final Ball context, Dispatcher dispatcher) {
+
+	}
+
+}

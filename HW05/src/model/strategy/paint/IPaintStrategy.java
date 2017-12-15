@@ -1,0 +1,46 @@
+package model.strategy.paint;
+
+/**
+ * The top-level superclass (interface, actually) that fundamentally defines what a painting strategy can do. 
+ * @author YiqingLu
+ * @author HaoyuanYue
+ */
+
+import java.awt.Graphics;
+
+import model.ball.Ball;
+
+
+public interface IPaintStrategy {
+
+	/**
+	 * used to initialize the strategy and host ball. 
+	 * @param host The ball object we need to paint.
+	 */
+	public void init(Ball host);
+
+	/**
+	 * The actual paint operation that is called during the (re)painting process.  
+	 * Paints the host onto the given Graphics context. The exact nature of the manipulations 
+	 * required to get the ball's visual representation onto the screen is up to the implementing 
+	 * class and may or may not involve affine transforms.
+	 * @param g The Graphics object.
+	 * @param host The ball object we need to paint.
+	 */
+	public void paint(Graphics g, Ball host);
+
+	/**
+	 * No-op "null" factory
+	 * See the web page on the Null Object Design Pattern at http://cnx.org/content/m17227/latest/
+	 */
+	public static final class NullFactory implements IPaintFac {
+		public IPaintStrategy make() {
+			return new IPaintStrategy() {
+
+				public void init(Ball host) { }
+
+				public void paint(Graphics g, Ball host) { }
+			};
+		}
+	}
+}

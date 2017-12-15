@@ -1,0 +1,13 @@
+package model.strategy;
+
+/**
+ * A class that will paint an image on the GUI and keep it on the right.
+ * @author Yiqing Lu
+ * @author Ye Wang
+ */	
+
+public class MarioPaintStrategy extends UprightImagePaintStrategy{
+	public MarioPaintStrategy() {
+		super("images/Mario_animate.gif", 0.5);
+	}
+}

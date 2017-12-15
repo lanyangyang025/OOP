@@ -1,0 +1,20 @@
+package strategy;
+
+import model.Ball;
+import model.IUpdateStrategy;
+import util.Randomizer;
+
+public class CurveStrategy implements IUpdateStrategy{
+
+	double theta = Randomizer.Singleton.randomDouble(-Math.PI / 3, Math.PI / 3);
+	@Override
+	public void updateState(Ball ball) {
+		// TODO Auto-generated method stub
+		ball.velocity.x = (int) Math.ceil(Math.cos(theta) * ball.velocity.x - Math.sin(theta) * ball.velocity.y);
+		ball.velocity.y = (int) Math.ceil(Math.cos(theta) * ball.velocity.y + Math.sin(theta) * ball.velocity.x);
+		if (ball.velocity.x == 0 && ball.velocity.y == 0) {
+			ball.velocity.x = Randomizer.Singleton.randomInt(5, 15);
+		}
+	}
+
+}

@@ -1,0 +1,24 @@
+package model;
+
+import java.awt.Graphics;
+
+import javax.swing.Timer;
+
+public class BallModel {
+	
+	private Dispatcher myDispatcher = new Dispatcher();
+
+	private IModel2ViewAdapter _model2ViewAdpt = IModel2ViewAdapter.NULL_OBJECT; // Insures that the adapter is always valid
+	public BallModel(IModel2ViewAdapter model2ViewAdpt ) {
+	        this._model2ViewAdpt  = model2ViewAdpt;
+	}
+	
+	private int _timeSlice = 50;  // update every 50 milliseconds
+	private Timer _timer = new Timer(_timeSlice,  (e) -> _model2ViewAdpt.update());
+
+    public void update(Graphics g) {
+        myDispatcher.notifyAll(g);  // The Graphics object is being given to all the sprites (Observers)
+    }
+
+	
+}

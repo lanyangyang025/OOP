@@ -1,0 +1,53 @@
+package yl128_pg23.model.room.cmd;
+
+import java.util.UUID;
+
+import common.DataPacketCR;
+import common.DataPacketCRAlgoCmd;
+import common.ICRCmd2ModelAdapter;
+import provided.mixedData.MixedDataKey;
+import yl128_pg23.model.ICR2GameAdapter;
+import yl128_pg23.model.datatype.GameMsgGlobalType;
+
+import yl128_pg23.game.server.controller.GameController;
+
+/**
+ * The command to deal with sending the text in the lobby
+ * @author Yiqing Lu
+ *
+ */
+public class CmdGameGlobalText extends DataPacketCRAlgoCmd<GameMsgGlobalType> {
+
+	private static final long serialVersionUID = -3838770341127745921L;
+
+	private transient ICRCmd2ModelAdapter adpt;
+
+	/**
+	 * @param iCmd2ModelAdapter
+	 */
+	public CmdGameGlobalText(ICRCmd2ModelAdapter iCmd2ModelAdapter) {
+		this.adpt = iCmd2ModelAdapter;
+	}
+
+	/* (non-Javadoc)
+	 * @see provided.datapacket.ADataPacketAlgoCmd#apply(java.lang.Class, provided.datapacket.ADataPacket, java.lang.Object[])
+	 */
+	@Override
+	public String apply(Class<?> index, DataPacketCR<GameMsgGlobalType> host, String... params) {
+		UUID gameID = UUID.fromString(GameController.getGameId());
+		ICR2GameAdapter gameAdpater = adpt
+				.get(new MixedDataKey<>(gameID, GameController.getDes(), ICR2GameAdapter.class));
+		gameAdpater.appendMsgGlobal(host.getData().getString());
+
+		return host.getData().getString();
+	}
+
+	/* (non-Javadoc)
+	 * @see provided.datapacket.ADataPacketAlgoCmd#setCmd2ModelAdpt(java.lang.Object)
+	 */
+	@Override
+	public void setCmd2ModelAdpt(ICRCmd2ModelAdapter adpt) {
+		this.adpt = adpt;
+	}
+
+}

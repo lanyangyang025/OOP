@@ -1,0 +1,10 @@
+package model.strategy;
+
+public class BirdSheepImagePaintStrategy extends ImagePaintStrategy{
+	
+	public BirdSheepImagePaintStrategy() {
+		super(Math.random() < 0.5 ? "images/sheep_animate.gif":"images/humbird_animate.gif", 0.5);
+		// TODO Auto-generated constructor stub
+	}
+
+}

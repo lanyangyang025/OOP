@@ -1,0 +1,151 @@
+/**
+ * 
+ */
+package yl128_pg23.control;
+
+import java.awt.EventQueue;
+import java.util.List;
+
+import javax.swing.JPanel;
+
+import common.IChatRoom;
+import common.IUser;
+import yl128_pg23.model.ChatModel;
+import yl128_pg23.model.ChatRoom;
+import yl128_pg23.model.ChatWindow;
+import yl128_pg23.model.IViewAdapter;
+import yl128_pg23.view.ChatView;
+import yl128_pg23.view.IModelAdapter;
+
+/**
+ * @author Yiqing Lu, Peisheng Guo
+ *
+ */
+public class ChatControl {
+	private ChatModel mainModel;
+	private ChatView mainView;
+
+	public ChatControl() {
+
+		mainModel = new ChatModel(new IViewAdapter() {
+
+			@Override
+			public void addConnPeer(IUser peer) {
+				mainView.addConnPeer(peer);
+
+			}
+
+			@Override
+			public void addConnCR(ChatRoom cr) {
+				mainView.addConnCR(cr);
+
+			}
+
+			/*
+						@Override
+						public void updateMsg() {
+							mainView.updateMsg();
+							
+						}
+			*/
+			@Override
+			public void updateCRs(List<IChatRoom> lst) {
+				//mainView.updateCRs(lst);
+
+			}
+
+			@Override
+			public void updatePeers(List<IUser> connectedPeers) {
+				mainView.updatePeers(connectedPeers);
+			}
+
+			@Override
+			public void updateMsg() {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void addWindow(IUser user, IChatRoom chatRoom) {
+				// TODO Auto-generated method stub
+				mainView.addWindow(user, chatRoom);
+			}
+
+		});
+
+		mainView = new ChatView(new IModelAdapter() {
+
+			@Override
+			public void connectPeer(String addr) {
+				mainModel.connectPeer(addr);
+
+			}
+
+			@Override
+			public void setSelfName(String name) {
+				mainModel.setSelfName(name);
+
+			}
+
+			@Override
+			public ChatWindow createCR() {
+				return mainModel.createCR();
+			}
+
+			@Override
+			public List<IChatRoom> fetchCRList(IUser iPeer) {
+				return mainModel.fetchCRList(iPeer);
+			}
+
+			@Override
+			public ChatWindow joinCR(IUser iPeer, IChatRoom icr) {
+				return mainModel.joinCR(iPeer, icr);
+
+			}
+
+			@Override
+			public String getIP() {
+				return mainModel.getIP();
+			}
+
+			@Override
+			public String getUserName() {
+
+				return mainModel.getUserName();
+			}
+
+			@Override
+			public void leaveCR(JPanel icr) {
+				mainModel.leaveCR(icr);
+
+			}
+
+			@Override
+			public void sendDataPacket(IChatRoom icr, String dpType, String text) {
+				mainModel.sendDataPacket(icr, dpType, text);
+			}
+
+		});
+	}
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					ChatControl mainCtrl = new ChatControl();
+					mainCtrl.start();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	public void start() {
+		mainModel.start();
+		mainView.start();
+	}
+}

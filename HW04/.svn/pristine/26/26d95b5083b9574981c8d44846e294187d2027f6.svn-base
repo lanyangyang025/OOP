@@ -1,0 +1,18 @@
+package strategy;
+
+import ball.Ball;
+
+/**
+ * a strategy of keeping the ball's velocity
+ * @author Ye Wang
+ * @author Dai Li
+ *
+ */
+public class StraightStrategy extends IUpdateStrategy {
+
+	@Override
+	public void updateState(Ball ball) {
+		// do nothing
+	}
+
+}

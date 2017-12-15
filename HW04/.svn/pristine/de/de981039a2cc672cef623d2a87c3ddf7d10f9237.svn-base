@@ -1,0 +1,7 @@
+package model.strategy;
+
+public class MarioPaintStrategy extends UprightImagePaintStrategy{
+	public MarioPaintStrategy() {
+		super("images/Mario_animate.gif", 0.5);
+	}
+}

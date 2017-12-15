@@ -1,0 +1,36 @@
+package model.strategy.shape;
+
+/**
+ * the factory that stores a polygon shape.
+ * @author Ye Wang
+ * @author Yiqing Lu
+ */
+
+import java.awt.Point;
+import java.awt.Polygon;
+import java.awt.Shape;
+import java.awt.geom.AffineTransform;
+
+public class PolygonFactory implements IShapeFactory {
+
+	Polygon poly = new Polygon();
+	AffineTransform at = new AffineTransform();
+	double scaleFactor = 1.0;
+
+	PolygonFactory(AffineTransform at, double scaleFactor, Point... pts) {
+		this.at = at;
+		this.scaleFactor = scaleFactor;
+		for (Point pt : pts) {
+			poly.addPoint(pt.x, pt.y);
+		}
+	};
+
+	@Override
+	public Shape makeShape(double x, double y, double xScale, double yScale) {
+		// TODO Auto-generated method stub
+		at.setToTranslation(x, y);
+		at.scale(xScale * scaleFactor, yScale * scaleFactor); // optional rotation can be added as well
+		return at.createTransformedShape(poly);
+	}
+
+}

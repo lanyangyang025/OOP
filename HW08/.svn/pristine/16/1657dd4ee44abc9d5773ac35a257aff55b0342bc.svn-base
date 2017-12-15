@@ -1,0 +1,101 @@
+package view;
+
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.rmi.RemoteException;
+
+import javax.swing.JList;
+import javax.swing.JTextArea;
+import javax.swing.JButton;
+
+import common.IChatRoom;
+import common.IReceiver;
+import common.IUser;
+
+import javax.swing.DefaultListModel;
+
+import javax.swing.JScrollPane;
+
+import javax.swing.JSplitPane;
+import javax.swing.JTextField;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+
+
+public class ChatroomView extends JPanel {
+
+	private static final long serialVersionUID = -6314403003364664653L;
+	
+	public IChatRoom room;
+
+	IMini2ModelAdapter _imodeladapter;
+	private final JPanel panel = new JPanel();
+	private final JSplitPane splitPane = new JSplitPane();
+	private final JTextField textField = new JTextField();
+	private final JButton btnNewButton = new JButton("Send");
+	private final JButton btnNewButton_1 = new JButton("Image");
+	private final JScrollPane scrollPane = new JScrollPane();
+	private final JScrollPane scrollPane_1 = new JScrollPane();
+	private final JTextArea textArea = new JTextArea();
+	private final JList<String> user_list = new JList<>(new DefaultListModel<>());
+
+	private IReceiver receiver;
+	
+	public ChatroomView(IMini2ModelAdapter _imodeladapter, IReceiver receiver) {
+		textField.setColumns(10);
+		this._imodeladapter = _imodeladapter;
+		this.receiver = receiver;
+		initGUI();
+	}
+
+	
+	private void initGUI() {
+		setLayout(new BorderLayout(0, 0));
+		
+		add(panel, BorderLayout.SOUTH);
+		
+		panel.add(textField);
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				_imodeladapter.sendDataPacket(textField.getText(), receiver);
+				textField.setText("");
+			}
+		});
+		
+		panel.add(btnNewButton);
+		
+		panel.add(btnNewButton_1);
+		splitPane.setResizeWeight(0.2);
+		
+		add(splitPane, BorderLayout.CENTER);
+		
+		splitPane.setLeftComponent(scrollPane);
+		
+		scrollPane.setViewportView(user_list);
+		
+		splitPane.setRightComponent(scrollPane_1);
+		
+		scrollPane_1.setViewportView(textArea);
+	}
+	
+	public void outputToTextArea(String string) {
+		// append string
+		textArea.append(string);
+		
+		// force scroll down to the newest string appended
+		textArea.setCaretPosition(textArea.getText().length());
+	}
+	
+	public void clearUserList() {
+		((DefaultListModel<String>)user_list.getModel()).removeAllElements();
+	}
+	
+	public void addUserList(IReceiver receiver) throws RemoteException {
+		if (!((DefaultListModel<String>)user_list.getModel()).contains(receiver.getUserStub().getName()))
+			((DefaultListModel<String>)user_list.getModel()).addElement(receiver.getUserStub().getName());
+	}
+	
+	public String getName() {
+		return _imodeladapter.getName();
+	}
+}

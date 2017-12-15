@@ -1,0 +1,90 @@
+package model;
+
+import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
+import java.util.function.Consumer;
+
+import provided.compute.ICompute;
+import provided.compute.ILocalTaskViewAdapter;
+import provided.compute.IRemoteTaskViewAdapter;
+import provided.rmiUtils.IRMI_Defs;
+import provided.rmiUtils.RMIUtils;
+
+public class EngineModel {
+
+	private IEngineViewAdapter _iModel2View;
+	
+	static IRemoteTaskViewAdapter clientTVAStub;
+	IRemoteTaskViewAdapter engineAdapterstub;
+	
+	Registry registry;
+	
+	public EngineModel(IEngineViewAdapter _iModel2View) {
+		this._iModel2View = _iModel2View;
+	}
+	
+	
+	
+	private Consumer<String> outputCmd = (x) -> _iModel2View.outputToTextArea(x + "\n");
+
+	RMIUtils rmi = new RMIUtils(outputCmd);
+	
+	
+	private ILocalTaskViewAdapter engineTask = new ILocalTaskViewAdapter() {
+		public void append(String s) {
+			_iModel2View.outputToTextArea(s);
+		}
+	};
+	
+	
+	private ComputeImpl server = new ComputeImpl(outputCmd);
+	
+	public void start() {
+		
+		try {
+			rmi.startRMI(IRMI_Defs.CLASS_SERVER_PORT_SERVER);
+			
+			engineTask.append("[EngineModel.start()] " +"Instantiated new Compute engine: "+server+"\n");
+
+			ICompute stub =(ICompute) UnicastRemoteObject.exportObject(server, IRemoteTaskViewAdapter.BOUND_PORT_SERVER);
+			engineTask.append("[EngineModel.start()] " +"Looking for registry..."+"\n");
+
+			registry = rmi.getLocalRegistry();
+
+			engineTask.append("[EngineModel.start()] " +"Found registry: "+ registry+ "\n");
+			
+			registry.rebind(ICompute.BOUND_NAME, stub);
+			
+			engineTask.append("[EngineModel.start()] " +"ComputeEngine bound to "+ICompute.BOUND_NAME+"\n");
+			engineTask.append("Waiting..."+"\n");
+		} 
+		catch (Exception e) {
+			e.printStackTrace();
+			System.exit(0);
+		}
+
+		
+	
+	}
+	
+
+	
+	public void stop() {
+		engineTask.append("[Client]: Attempting to quit...\n");
+		try {
+			registry.unbind(ICompute.BOUND_NAME);
+			System.out.println("Unbinding the EngineController");
+			rmi.stopRMI();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		System.exit(0);
+	}
+	
+	public void sendMsg(String text) {
+		server.sendMsg(text);
+	}
+}
+
+

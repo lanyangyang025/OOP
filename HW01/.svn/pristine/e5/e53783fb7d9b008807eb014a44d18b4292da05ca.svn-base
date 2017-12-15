@@ -1,0 +1,141 @@
+package view;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JLabel;
+import javax.swing.JButton;
+import javax.swing.JTextField;
+
+public class hw01 extends JFrame {
+	private static final long serialVersionUID = -8820281082327906517L;
+
+	private JPanel contentPane;
+	private String/*No type specified!*/ get_shape = new Circle(60, 60, Color.CYAN, 30);
+	private final JPanel pnlControl_1 = new JPanel() {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 8415531650755635852L;
+
+		/**
+		* Overridden paintComponent method to paint a shape in the panel.
+		* @param g The Graphics object to paint on.
+		**/
+		public void paintComponent(Graphics g) {
+			super.paintComponent(g); // Do everything normally done first, e.g. clear the screen.
+			g.setColor(Color.RED); // Set the color to use when drawing
+			g.fillOval(75, 100, 20, 40); // paint a filled 20x40 red ellipse whose upper left corner is at (75, 100) 
+			get_shape.paint(g);
+		}
+	};
+	private final JPanel pnlControl_2 = new JPanel();
+	private final JLabel lblInfo = new JLabel("New label");
+	private final JButton btn_Control = new JButton("Change text");
+	private final JTextField text_Field = new JTextField();
+	private final JPanel panel = new JPanel();
+	private final JPanel panel_1 = new JPanel();
+	private final JPanel panel_2 = new JPanel();
+	private final JButton btn_Control_1 = new JButton("Circle");
+	private final JButton btn_Control_2 = new JButton("Arc");
+	private final JButton btn_Control_3 = new JButton("Rectangle");
+	private final JButton btn_Control_4 = new JButton("House");
+
+	/**
+	* Launch the application.
+	*/
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					hw01 frame = new hw01();
+					frame.start();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	* Create the frame.
+	*/
+	public void start() {
+		setVisible(true);
+	}
+
+	public hw01() {
+		text_Field.setColumns(10);
+		initGUI();
+	}
+
+	private void initGUI() {
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 450, 300);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		contentPane.setLayout(new BorderLayout(0, 0));
+		setContentPane(contentPane);
+		pnlControl_1.setBackground(Color.ORANGE);
+
+		contentPane.add(pnlControl_1, BorderLayout.CENTER);
+		pnlControl_2.setBackground(Color.RED);
+
+		contentPane.add(pnlControl_2, BorderLayout.NORTH);
+
+		pnlControl_2.add(lblInfo);
+		btn_Control.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				lblInfo.setText(text_Field.getText());
+				System.out.println(text_Field.getText());
+			}
+		});
+
+		pnlControl_2.add(btn_Control);
+
+		pnlControl_2.add(text_Field);
+		panel.setBackground(Color.PINK);
+
+		contentPane.add(panel, BorderLayout.WEST);
+		panel_1.setBackground(Color.CYAN);
+
+		contentPane.add(panel_1, BorderLayout.SOUTH);
+		btn_Control_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				get_shape = new Circle(100, 90, Color.darkGray, 20);
+				pnlControl_1.repaint();
+
+			}
+		});
+
+		panel_1.add(btn_Control_1);
+		btn_Control_2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				get_shape = new Arc(80, 100, 20, 30, 0, 180, Color.GREEN);
+				pnlControl_1.repaint();
+			}
+		});
+
+		panel_1.add(btn_Control_2);
+		btn_Control_3.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				get_shape = new Rectangle(120, 100, 40, 30, Color.YELLOW);
+				pnlControl_1.repaint();
+			}
+		});
+
+		panel_1.add(btn_Control_3);
+		btn_Control_4.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				get_shape = new Compound_shape(new Arc(80, 100, 20, 30, 0, 180, Color.GREEN),
+						new Rectangle(120, 100, 40, 30, Color.YELLOW));
+				pnlControl_1.repaint();
+			}
+		});
+
+		panel_1.add(btn_Control_4);
+		panel_2.setBackground(Color.PINK);
+
+		contentPane.add(panel_2, BorderLayout.EAST);
+	}
+
+}

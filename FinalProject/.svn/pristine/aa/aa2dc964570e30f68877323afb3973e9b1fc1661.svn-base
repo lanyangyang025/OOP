@@ -1,0 +1,199 @@
+/**
+ * 
+ */
+package yl128_pg23.model;
+
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.UUID;
+
+import common.DataPacketUser;
+import common.IChatRoom;
+import common.IUser;
+import common.IUserMessageType;
+
+/**
+ * The user
+ * @author Yiqing Lu
+ *
+ */
+public class User implements IUser {
+
+	private List<IUser> connectedPeers;
+	private transient IViewAdapter adpt;
+	private String userName;
+	private UUID uuid;
+	//private DataPacketAlgo<String,String> cmdMngr;
+	private transient ChatRoomManager crMngr;
+
+	public User(String name, IViewAdapter adpt) {
+		uuid = UUID.randomUUID();
+		connectedPeers = new ArrayList<IUser>();
+		crMngr = new ChatRoomManager(adpt, this);
+		this.adpt = adpt;
+		userName = name;
+	}
+
+	public List<String> getConnectedPeersNameList() {
+		List<String> nameList = new ArrayList<String>();
+		for (int i = 0; i < connectedPeers.size(); i++) {
+			nameList.add(getName());
+		}
+		return nameList;
+
+	}
+
+	public void setUserName(String name) {
+		userName = name;
+	}
+
+	@Override
+	public String toString() {
+		return getName();
+	}
+
+	/* (non-Javadoc)
+	 * @see common.IUser#getUUID()
+	 */
+	@Override
+	public UUID getUUID() {
+		// TODO Auto-generated method stub
+		return uuid;
+	}
+
+	/* (non-Javadoc)
+	 * @see common.IUser#getPeerName()
+	 */
+	@Override
+	public String getName() {
+		// TODO Auto-generated method stub
+		return userName;
+	}
+
+	/* (non-Javadoc)
+	 * @see common.IUser#connect(common.IUser)
+	 */
+	@Override
+	public void connect(IUser peer) {
+		boolean exists = false;
+		for (int i=0; i<connectedPeers.size(); i++) {
+			IUser p = connectedPeers.get(i);
+			try {
+				if (p.getUUID().equals(peer.getUUID())) {
+					exists = true;
+					break;
+				}
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
+		}
+		if (!exists) {
+			connectedPeers.add(peer);
+			adpt.addConnPeer(peer);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see common.IUser#fetchCRList()
+	 */
+	@Override
+	public List<IChatRoom> getChatRooms() {
+		return new ArrayList<IChatRoom>(crMngr.getCRList());
+		//List<ChatRoom> list = crMngr.getCRList();
+		//return new ArrayList<IChatRoom>();
+
+	}
+
+	public boolean leaveCR(ChatWindow cw) {
+		crMngr.leaveCR(cw);
+		//adpt.updateCRs(new ArrayList<IChatRoom>(crMngr.getCRList()));
+		return true;
+	}
+
+	/**
+	 * 
+	 */
+	public ChatWindow createCR() {
+		//crMngr.createCR(new ChatRoom(userName+":"+crMngr.getCRList().size(),cmdMngr));
+		return crMngr.createCR(userName);
+	}
+
+	public ChatWindow joinCR(IUser iPeer, IChatRoom cr) {
+		Collection<IChatRoom> clcRooms = null;
+		try {
+			clcRooms = iPeer.getChatRooms();
+		} catch (RemoteException e1) {
+			e1.printStackTrace();
+		}
+		if (clcRooms == null)
+			return null;
+		List<IChatRoom> crList = new ArrayList<IChatRoom>();
+		for (IChatRoom tcr : clcRooms) {
+			crList.add(tcr);
+		}
+		if (crList != null) {
+			IChatRoom targetCR = null;
+			for (IChatRoom c : crList) {
+				if (c.getUUID().equals(cr.getUUID()))
+					targetCR = c;
+			}
+			if (targetCR != null) {
+				//crMngr.createCR(new ChatRoom(targetCR,cmdMngr));
+				return crMngr.createCR(targetCR);
+			}
+		}
+		return null;
+	}
+
+	/*
+	@Override
+	public ADataPacketAlgoCmdGroupF getNewCommand(Class requestClass) throws RemoteException {
+		return (ADataPacketAlgoCmdGroupF) dataPacketAlgo.getCmd(requestClass);
+	}
+	*/
+
+	/* (non-Javadoc)
+	 * @see common.IUser#setDataPacketAlgoCmd(provided.datapacket.ADataPacketAlgoCmd)
+	 */
+	/*
+	@Override
+	public void setDataPacketAlgoCmd(ADataPacketAlgoCmd dataPacketAlgoCmd) throws RemoteException {
+		dataPacketAlgoCmd.setCmd2ModelAdpt(adpt);
+		cmdMngr.setCmd(dataPacketAlgoCmd.getClass(), dataPacketAlgoCmd);
+	}
+	 */
+	/* (non-Javadoc)
+	 * @see common.IUser#getDataPacketAlgoCmd(java.lang.Class)
+	 */
+	/*
+	@Override
+	public ADataPacketAlgoCmd getDataPacketAlgoCmd(Object c) throws RemoteException {
+		return (ADataPacketAlgoCmd) cmdMngr.getCmd(c.getClass());
+	}
+	*/
+
+	/**
+	 * @param remoteStub
+	 * @return
+	 */
+	public boolean exists(IUser remoteStub) {
+		for (int i=0; i<connectedPeers.size(); i++) {
+			IUser p = connectedPeers.get(i);
+			try {
+				if (p.getUUID().equals(remoteStub.getUUID()))
+					return true;
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public <T extends IUserMessageType> void receive(DataPacketUser<T> data) throws RemoteException {
+		// TODO Auto-generated method stub
+		
+	}
+}

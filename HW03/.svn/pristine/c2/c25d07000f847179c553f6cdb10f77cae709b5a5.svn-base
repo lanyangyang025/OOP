@@ -1,0 +1,19 @@
+package strategy;
+
+import model.Ball;
+import model.IUpdateStrategy;
+
+public class MultiStrategy implements IUpdateStrategy{
+	public IUpdateStrategy s1;
+	public IUpdateStrategy s2;
+	public MultiStrategy(IUpdateStrategy s1, IUpdateStrategy s2){
+		this.s1 = s1;
+		this.s2 = s2;
+	}
+
+	@Override
+	public void updateState(Ball ball) {
+		s1.updateState(ball);
+		s2.updateState(ball);	
+	}
+}

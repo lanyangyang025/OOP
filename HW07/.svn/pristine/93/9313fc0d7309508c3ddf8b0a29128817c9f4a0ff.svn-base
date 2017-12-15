@@ -1,0 +1,67 @@
+package view;
+
+import java.awt.BorderLayout;
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.border.TitledBorder;
+import javax.swing.JTextArea;
+
+public class EngineView extends JFrame {
+
+	private JPanel contentPane;
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					EngineView frame = new EngineView();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the frame.
+	 */
+	public EngineView() {
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 800, 300);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		contentPane.setLayout(new BorderLayout(0, 0));
+		setContentPane(contentPane);
+		
+		JPanel panel = new JPanel();
+		contentPane.add(panel, BorderLayout.NORTH);
+		
+		JPanel panel_1 = new JPanel();
+		panel.add(panel_1);
+		
+		JButton btnQuit = new JButton("Quit");
+		btnQuit.setToolTipText("Click to quit server engine");
+		panel_1.add(btnQuit);
+		
+		JPanel panel_2 = new JPanel();
+		panel_2.setBorder(new TitledBorder(null, "Send msg to remote client's view", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		panel.add(panel_2);
+		
+		JLabel lblHitEnterTo = new JLabel("Hit Enter to send msg...");
+		panel_2.add(lblHitEnterTo);
+		
+		JTextArea textArea = new JTextArea();
+		textArea.setToolTipText("The status and task result will be shown here");
+		contentPane.add(textArea, BorderLayout.CENTER);
+	}
+
+}

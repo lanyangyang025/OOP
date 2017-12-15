@@ -1,0 +1,12 @@
+COMP HW07
+Team member: Zihan Wang, Yiqing Lu
+
+To run the project correctly, the user needs to follow the three steps first:
+
+1) run EngineControl.java file
+2) run ClientControl.java file, the content on the text area of Remote Host is the ip address of local host.
+3) You could put the remote host address on the text area of Remote Host, and then press the "connect" button. The Engine
+   GUI would show the message "Hello from the client!" and the Client GUI would show the message "Connection to (your IP address) 
+   established!" if the connection establishes successfully.
+
+If the connection could be set up correctly, we could do the following

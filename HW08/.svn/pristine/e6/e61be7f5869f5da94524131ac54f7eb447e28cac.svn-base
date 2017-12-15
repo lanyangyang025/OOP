@@ -1,0 +1,110 @@
+package controller;
+
+import java.io.Serializable;
+import java.rmi.RemoteException;
+import java.util.Collection;
+import java.util.UUID;
+
+import javax.swing.ImageIcon;
+
+import common.DataPacketChatRoom;
+import common.IReceiver;
+import common.IUser;
+import model.ChatRoom;
+import model.IMini2ViewAdapter;
+import view.ChatroomView;
+import view.IMini2ModelAdapter;
+
+public class MiniControl{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8268708240983852273L;
+	private ChatroomView miniView;
+	private ChatRoom room;
+	
+	public MiniControl(ChatRoom chatroom, IReceiver receiver) {
+
+		room = chatroom;
+		
+		room.setMiniView(new IMini2ViewAdapter() {
+
+			@Override
+			public void addUserList(IReceiver receiver) {
+				// TODO Auto-generated method stub
+				try {
+					miniView.addUserList(receiver);
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+
+			@Override
+			public ChatroomView getRoomView() {
+				// TODO Auto-generated method stub
+				return miniView;
+			}
+
+			@Override
+			public void append(String text, String name) {
+				// TODO Auto-generated method stub
+				miniView.outputTotextPanel(name+" : ");
+				miniView.outputTotextPanel(text);
+			}
+
+			@Override
+			public void addImage(ImageIcon data) {
+				// TODO Auto-generated method stub
+				miniView.addImage(data);
+			}
+
+			@Override
+			public void removeUserList(IReceiver receiver) {
+				miniView.removeUserList(receiver);				
+			}			
+		});
+		
+		miniView = new ChatroomView(new IMini2ModelAdapter() {
+
+			
+			public String getName() {
+				return room.getName();
+			}
+			
+			public UUID getUUID() {
+				return room.getUUID();
+			}
+
+			@Override
+			public void sendDataPacket(String text, IReceiver receiver) {
+				// TODO Auto-generated method stub
+				room.sendPacket(new DataPacketChatRoom<String>(String.class, text, receiver));
+			}
+
+			@Override
+			public void sendImage(ImageIcon image) {
+				// TODO Auto-generated method stub
+				room.sendPacket(new DataPacketChatRoom<ImageIcon>(ImageIcon.class, image, receiver));
+				
+			}
+
+			@Override
+			public void quit() {
+				// TODO Auto-generated method stub
+				room.leaveRoom(receiver);
+			}
+
+			@Override
+			public ChatRoom getChatRoom() {
+				// TODO Auto-generated method stub
+				return room;
+			}
+		}, receiver);
+		
+	}
+	public ChatroomView getChatView() {
+		return miniView;
+	}
+
+}

@@ -1,0 +1,61 @@
+package view;
+
+import provided.client.model.taskUtils.ITaskFactory;
+import provided.compute.ITask;
+
+/**
+ * View to Model Adapter of Client
+ * @author Zihan Wang, Yiqing Lu
+ *
+ */
+public interface IClientModelAdapter {
+	/**
+	 * Quit client and close the connection
+	 */
+	public void quit();
+	
+	/**
+	 * Initialize the client application
+	 * and start RMI connect
+	 */
+	public void init();
+	
+	/**
+	 * Connect to the remote hosts
+	 * @param remoteIP the address of the remote host
+	 * @return status string of connection result
+	 */
+	public String connect(String remoteIP);
+	
+	/**
+	 * Sends a string message to the connected compute engine using the IRemoteTaskViewAdapter STUB
+	 * received from the engine server.   This message should also be echoed to the local user interface.
+	 * @param text The message to be sent
+	 */
+	public void sendMsgToComputeEngine(String text);
+	
+	/**
+	 * Load a task and return its class name
+	 * @param task the input task string
+	 * @return
+	 */
+	public ITaskFactory<?> addTask(String task);
+	
+	/**
+	 * Runs the given ITask on the remote engine server, returning the String formatted
+	 * result, which is produced using the given ITask's ITaskResultFormatter object. 
+	 * @param task The task to run on the remote engine server.
+	 * @param <T> The return type of the give ITask
+	 * @return A string representation of the task results, using the task's formatter object.
+	 */
+	public <T> String runTask(ITask<T> task);
+	
+	/**
+	 * Combine two tasks and return the MultiTask
+	 * @param task1 component 1
+	 * @param task2 component 2
+	 * @param param parameter to make tasks
+	 * @return
+	 */
+	public ITaskFactory<?> combineTask(ITaskFactory<?> task1, ITaskFactory<?> task2, String param);
+}

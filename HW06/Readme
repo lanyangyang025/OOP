@@ -1,0 +1,27 @@
+Readme:
+
+This simple music player application could play the music file of abc format with different kinds of instruments. 
+
+There are 13 music files could be loaded in the project. 
+1) beethoven_fav_waltz
+2) fur_elise
+3) happy_birthday
+4) joy to the world
+5) little_night_music
+6) minuet
+7) ode_to_joy
+8) paddy
+9) prelude
+10) scale
+11) smile
+12) star_spangled
+13) twinkle
+The user need to write it down in the text area on the top and then press "load" button. The content of the file will be shown in 
+"File Content" area. 
+
+And then the user need to press "parse" button to parse the file we loaded. The result will be shown in "Parsed IPhrase Structure"
+area.
+
+The combo box provides several instruments for playing. The user could choose one from them.
+
+And finally press the "Play" button, the music will be played.

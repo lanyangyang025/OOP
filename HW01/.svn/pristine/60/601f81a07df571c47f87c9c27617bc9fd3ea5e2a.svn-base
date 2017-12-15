@@ -1,0 +1,18 @@
+package shape;
+
+import java.awt.Graphics;
+
+public class Compound_shape {
+	public String/*No type specified!*/ shapes = new Ashape[2];
+
+	public Compound_shape(String/*No type specified*/ a1, String/*No type specified*/ a2) {
+		this.shapes[0] = a1;
+		this.shapes[1] = a2;
+	}
+
+	public void paint(Graphics g) {
+		this.shapes[0].paint(g);
+		this.shapes[1].paint(g);
+	}
+
+}

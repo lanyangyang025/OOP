@@ -1,0 +1,261 @@
+
+package model;
+
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Graphics;
+import java.awt.Point;
+import java.awt.Rectangle;
+
+import javax.swing.Timer;
+
+import ball.Ball;
+import model.strategy.IPaintStrategy;
+import model.strategy.BallPaintStrategy;
+import model.strategy.IPaintFac;
+import strategy.*;
+import util.Dispatcher;
+import util.Randomizer;
+
+/**
+ * the ballModel of the MVC system
+ * @author Yiqing Lu
+ * @author Ye Wang
+ */
+public class BallModel {
+
+	/**
+	 * model to view adapter
+	 */
+	private IModel2ViewAdapter _model2ViewAdpt = IModel2ViewAdapter.NULL_OBJECT; // Insures that the adapter is always valid
+
+	/**
+	 * Observable class that immediately notifies its Observers
+	 */
+	private Dispatcher myDispatcher = new Dispatcher();
+
+	/**
+	 * the delay of the timer
+	 */
+	private int _timeSlice = 50; // update every 50 milliseconds
+
+	/**
+	 * lambda function to use the timer to regularly update the view
+	 */
+	private Timer _timer = new Timer(_timeSlice, (e) -> _model2ViewAdpt.update());
+
+	/**
+	* This is the method that is called by the view's adapter to the model, i.e. is called by IView2ModelAdapter.paint().
+	* This method will update the sprites's painted locations by painting all the sprites
+	* onto the given Graphics object.
+	* @param g The Graphics object from the view's paintComponent() call.
+	*/
+	public void update(Graphics g) {
+		myDispatcher.notifyAll((IBallCmd) (context, disp) -> {
+			// Whatever you want to do with the context Ball!
+			context.bounce();
+			context.change(disp);
+			context.move();
+			context.paint(g);
+		});// The Graphics object is being given to all the sprites (Observers)
+	}
+
+	/**
+	 * constructor of ball model
+	 * @param iModel2ViewAdapter model to view adapter
+	 */
+	public BallModel(IModel2ViewAdapter iModel2ViewAdapter) {
+		_model2ViewAdpt = iModel2ViewAdapter;
+	}
+
+	/**
+	 * start the ball model
+	 */
+	public void start() {
+		_timer.start();
+	}
+
+	/**
+	 * get the GUI component that the balls will be drawn on
+	 * @return the painting GUI component
+	 */
+	public Component getComponent() {
+		return _model2ViewAdpt.getComponent();
+	}
+
+	/**
+	* The following method returns an instance of an IUpdateStrategy, given a fully qualified class name (package.classname) of
+	* a subclass of it.
+	* The method assumes that there is only one constructor for the supplied class that has the same *number* of
+	* input parameters as specified in the args array and that it conforms to a specific
+	* signature, i.e. specific order and types of input parameters in the args array.
+	* @param className A string that is the fully qualified class name of the desired object
+	* @return An instance of the supplied class. 
+	*/
+	private IUpdateStrategy loadStrategy(String strategyName) {
+		String fullName = "strategy." + strategyName + "Strategy";
+		try {
+			Object[] args = new Object[] {};
+			java.lang.reflect.Constructor<?> cs[] = Class.forName(fullName).getConstructors(); // get all the constructors
+			java.lang.reflect.Constructor<?> c = null;
+			for (int i = 0; i < cs.length; i++) { // find the first constructor with the right number of input parameters
+				if (args.length == (cs[i]).getParameterTypes().length) {
+					c = cs[i];
+					break;
+				}
+			}
+			return (IUpdateStrategy) c.newInstance(); // Call the constructor.   Will throw a null ptr exception if no constructor with the right number of input parameters was found.
+		} catch (Exception ex) {
+			System.err.println("Strategy " + strategyName + " failed to load. \nException = \n" + ex
+					+ "\nloaded a StraightStrategy instead");
+			// ex.printStackTrace();  // print the stack trace to help in debugging.
+			return new StraightStrategy(); // Is this really a useful thing to return here?  Is there something better that could be returned?
+		}
+	}
+
+	/**
+	* The following method returns an instance of an IPaintStrategy, given a fully qualified class name (package.classname) of
+	* a subclass of it.
+	* The method assumes that there is only one constructor for the supplied class that has the same *number* of
+	* input parameters as specified in the args array and that it conforms to a specific
+	* signature, i.e. specific order and types of input parameters in the args array.
+	* @param className A string that is the fully qualified class name of the desired object
+	* @return An instance of the supplied class. 
+	*/
+
+	private IPaintStrategy loadPaintStrategy(String strategyName) {
+		String fullName = "model.strategy." + strategyName + "PaintStrategy";
+
+		try {
+			Object[] args = new Object[] {};
+			java.lang.reflect.Constructor<?> cs[] = Class.forName(fullName).getConstructors(); // get all the constructors
+			java.lang.reflect.Constructor<?> c = null;
+			for (int i = 0; i < cs.length; i++) { // find the first constructor with the right number of input parameters
+				if (args.length == (cs[i]).getParameterTypes().length) {
+					c = cs[i];
+					break;
+				}
+			}
+			return (IPaintStrategy) c.newInstance(); // Call the constructor.   Will throw a null ptr exception if no constructor with the right number of input parameters was found.
+		} catch (Exception ex) {
+			System.err.println("Paint strategy " + strategyName + " failed to load. \nException = \n" + ex
+					+ "\nloaded a StraightStrategy instead");
+			// ex.printStackTrace();  // print the stack trace to help in debugging.
+			return new BallPaintStrategy(); // Is this really a useful thing to return here?  Is there something better that could be returned?
+		}
+	}
+
+	/**
+	 * create a new strategy factory that makes the strategy named by the input string
+	 * @param strategyName name of the strategy which the factory makes
+	 * @return the factory that makes this strategy
+	 */
+	public IStrategyFac addStrategyFac(String strategyName) {
+		return new IStrategyFac() {
+			@Override
+			public IUpdateStrategy make() {
+				return loadStrategy(strategyName);
+			}
+
+			@Override
+			public String toString() {
+				return strategyName;
+			}
+		};
+	}
+
+	/**
+	 * create a new paint strategy factory that makes the strategy named by the input string
+	 * @param strategyName name of the strategy which the factory makes
+	 * @return the factory that makes this paint strategy
+	 */
+	public IPaintFac addPaintFac(String strategyName) {
+		return new IPaintFac() {
+			@Override
+			public IPaintStrategy make() {
+				return loadPaintStrategy(strategyName);
+			}
+
+			@Override
+			public String toString() {
+				return strategyName;
+			}
+		};
+	}
+
+	/**
+	 * combine two strategy factory into one
+	 * @param f1 the first factory
+	 * @param f2 the second factory
+	 * @return the new combined factory
+	 */
+	public IStrategyFac combineStrategyFac(IStrategyFac f1, IStrategyFac f2) {
+		return new IStrategyFac() {
+			@Override
+			public IUpdateStrategy make() {
+				return new MultiStrategy(f1.make(), f2.make());
+			}
+
+			@Override
+			public String toString() {
+				return f1.toString() + "-" + f2.toString();
+			}
+		};
+	}
+
+	/**
+	 * the method to add a new ball to dispatcher
+	 * @param factory the factory to generate the ball's moving strategy
+	 * @param paint_fac the factory to generate the ball's paint strategy
+	 * @param switchable if the ball's strategy can be changed
+	 */
+	public void addABall(IStrategyFac factory, IPaintFac paint_fac, boolean switchable) {
+		//make a new strategy using the factory
+		IUpdateStrategy strategy = null;
+
+		//get the dimension of the canvas
+		Component canvas = _model2ViewAdpt.getComponent();
+		int width = canvas.getWidth();
+		int height = canvas.getHeight();
+		//prepare the initial parameters of the ball
+		Randomizer random = Randomizer.singleton;
+		Point upperLeft = random.randomLoc(new Rectangle(0, 0, width, height));
+		Point velocity = random.randomVel(new Rectangle(0, 0, 10, 20));
+		int radius = random.randomInt(5, 25);
+		Color newColor = random.randomColor();
+		IPaintStrategy paint_strategy;
+
+		if (paint_fac == null) {
+			paint_strategy = new BallPaintStrategy();
+		} else {
+			paint_strategy = paint_fac.make();
+		}
+
+		//make a strategy for the ball
+		if (switchable) {
+			strategy = new SwitchStrategy();
+		} else {
+			strategy = factory.make();
+		}
+
+		//make a new ball and add it to the dispatcher
+
+		Ball newBall = new Ball(upperLeft, velocity, radius, newColor, canvas, strategy, paint_strategy);
+		myDispatcher.addObserver(newBall);
+	}
+
+	/**
+	 * switch the strategies of all the switchers to a new strategy
+	 * @param fac the factory that will make the new strategy
+	 */
+	public void switchAll(IStrategyFac fac) {
+		SwitchStrategy.switchStrategy(fac.make());
+	}
+
+	/**
+	 * the method to remove all the ball instance from the dispatcher
+	 */
+	public void clearAll() {
+		myDispatcher.deleteObservers();
+	}
+}

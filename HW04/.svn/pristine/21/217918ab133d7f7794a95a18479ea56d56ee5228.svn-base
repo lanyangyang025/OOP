@@ -1,0 +1,21 @@
+package model.strategy;
+
+import java.awt.geom.AffineTransform;
+
+import model.strategy.shape.Fish2PolygonFactory;
+
+
+public class Fish2PaintStrategy extends ShapePaintStrategy{
+
+	public Fish2PaintStrategy(AffineTransform at) {
+		super(at, new Fish2PolygonFactory().makeShape(0, 0, 1, 1));
+		// TODO Auto-generated constructor stub
+	}
+
+	public Fish2PaintStrategy() {
+		this(new AffineTransform());
+		// TODO Auto-generated constructor stub
+	}
+
+	
+}

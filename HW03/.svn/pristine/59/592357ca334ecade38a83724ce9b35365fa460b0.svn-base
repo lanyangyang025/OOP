@@ -1,0 +1,186 @@
+package view;
+
+import java.awt.BorderLayout;
+import java.awt.Graphics;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+import java.awt.Color;
+import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import javax.swing.JTextField;
+import javax.swing.JLabel;
+import javax.swing.JComboBox;
+import java.awt.GridLayout;
+import java.awt.SystemColor;
+import javax.swing.SwingConstants;
+
+public class BallGUI<TDropListItem> extends JFrame {
+
+	private static final long serialVersionUID = 5621850870582071800L;
+	/**
+	 * view to model adapter
+	 */
+	private IView2ModelAdapter<TDropListItem> _view2ModelAdpt;
+	private JPanel contentPane;
+	private int count;
+	private final JPanel _pnlCanvas = new JPanel() {
+
+		private static final long serialVersionUID = -6952656931251224807L;
+
+		public void paintComponent(Graphics g) {
+			super.paintComponent(g); // Do everything normally done first, e.g. clear the screen.
+			//			g.setColor(Color.RED); // Set the color to use when drawing
+			//			g.fillOval(75, 100, 20, 20); // paint a filled 20x40 red ellipse whose upper left corner is at (75, 100) 
+			_view2ModelAdpt.paint(g); // call back to the model to paint the sprites
+		}
+	};
+	private final JTextField _fieldText = new JTextField();
+	private final JPanel north_panel = new JPanel();
+	private final JButton _btnMakeball = new JButton("Make Selected Ball");
+	private final JLabel _lblText = new JLabel("New label");
+	private final JButton _btnClear = new JButton("Clear All");
+	private final JComboBox<TDropListItem> Strategy_1 = new JComboBox();
+	private final JButton _brnAddList = new JButton("Add to list");
+	private final JPanel _pnlAdd = new JPanel();
+	private final JComboBox<TDropListItem> Strategy_2 = new JComboBox();
+	private final JPanel _pnlCombine = new JPanel();
+	private final JButton _btnCombine = new JButton("Combine!");
+	private final JPanel _pnlSwitch = new JPanel();
+	private final JButton btnMakeSwitcher = new JButton("Make Switcher");
+	private final JButton btnSwitch = new JButton("Switch!");
+
+	/**
+	 * Launch the application.
+	 */
+
+	public void start() {
+		setVisible(true);
+	}
+
+	/**
+	 * Create the frame.
+	 */
+	public BallGUI(IView2ModelAdapter<TDropListItem> _view2ModelAdpt) {
+		this._view2ModelAdpt = _view2ModelAdpt;
+		north_panel.setBackground(new Color(135, 206, 235));
+		_pnlAdd.setBackground(new Color(224, 255, 255));
+		
+		north_panel.add(_pnlAdd);
+		_pnlAdd.setLayout(new GridLayout(0, 1, 0, 0));
+		_pnlAdd.add(_fieldText);
+		_fieldText.setColumns(10);
+		_brnAddList.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				TDropListItem o = (TDropListItem) _view2ModelAdpt.addStrategy(_fieldText.getText());
+				if (null == o)
+					return; // just in case
+				Strategy_1.insertItemAt(o, 0);
+				Strategy_2.insertItemAt(o, 0);
+			}
+		});
+		_brnAddList.setForeground(Color.BLACK);
+		_brnAddList.setBackground(new Color(0, 0, 0));
+		_pnlAdd.add(_brnAddList);
+		_pnlCombine.setBackground(new Color(224, 255, 255));
+		
+		north_panel.add(_pnlCombine);
+		_pnlCombine.setLayout(new GridLayout(0, 1, 0, 0));
+		_btnCombine.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (null == Strategy_1.getSelectedItem() || null == Strategy_2.getSelectedItem()) {
+					return;
+				}
+				TDropListItem o = _view2ModelAdpt.combineStrategies(
+						Strategy_1.getItemAt(Strategy_1.getSelectedIndex()),
+						Strategy_2.getItemAt(Strategy_2.getSelectedIndex()));
+				if (null == o)
+					return; // just in case
+				Strategy_1.insertItemAt(o, 0);
+				Strategy_2.insertItemAt(o, 0);
+			}
+		});
+		
+		_pnlCombine.add(_btnCombine);
+		_pnlCombine.add(Strategy_1);
+		_pnlCombine.add(Strategy_2);
+		_btnClear.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				_view2ModelAdpt.clear();
+			}
+		});
+		
+		north_panel.add(_pnlSwitch);
+		_pnlSwitch.setLayout(new GridLayout(0, 1, 0, 0));
+		btnMakeSwitcher.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				_view2ModelAdpt.makeSwitcherBall();
+			}
+		});
+		
+		_pnlSwitch.add(btnMakeSwitcher);
+		btnSwitch.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				_view2ModelAdpt.switchStrategy(Strategy_1.getItemAt(Strategy_2.getSelectedIndex()));
+			}
+		});
+		
+		_pnlSwitch.add(btnSwitch);
+
+		north_panel.add(_btnClear);
+		north_panel.add(_lblText);
+		initGUI();
+	}
+
+	private void initGUI() {
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 637, 418);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		contentPane.setLayout(new BorderLayout(0, 0));
+		setContentPane(contentPane);
+		_pnlCanvas.setBackground(new Color(144, 238, 144));
+
+		contentPane.add(_pnlCanvas, BorderLayout.CENTER);
+
+		contentPane.add(north_panel, BorderLayout.NORTH);
+		action_Listener();
+		get_canvas();
+	}
+
+	/**
+	 * get the classname of the ball and send it to controller and model
+	 */
+	public void action_Listener() {
+		_pnlCombine.add(_btnMakeball);
+		_btnMakeball.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (null == Strategy_1.getSelectedItem())
+					return;
+				_view2ModelAdpt.makeBall(Strategy_1.getItemAt(Strategy_1.getSelectedIndex()));
+			}
+		});
+	}
+
+	public void update() {
+		_pnlCanvas.repaint();
+		_lblText.setText("Ball Number: " + count);
+	}
+
+	/**
+	 * get the canvas and send the canvas information to model through controller
+	 */
+	public void get_canvas() {
+		_view2ModelAdpt.get_canvas(_pnlCanvas);
+	}
+
+	/**
+	 * get count from controller and model
+	 */
+	public void get_count(int count) {
+		this.count = count;
+	}
+
+}

@@ -1,0 +1,16 @@
+package strategy;
+
+import model.Ball;
+import model.IUpdateStrategy;
+import util.Randomizer;
+
+public class WanderStrategy implements IUpdateStrategy{
+
+	@Override
+	public void updateState(Ball ball) {
+		// TODO Auto-generated method stub
+		ball.origin.x += Randomizer.Singleton.randomInt(-10, 10);
+		ball.origin.y += Randomizer.Singleton.randomInt(-10, 10);
+	}
+
+}

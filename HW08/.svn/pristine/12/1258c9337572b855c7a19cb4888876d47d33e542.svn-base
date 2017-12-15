@@ -1,0 +1,14 @@
+package view;
+
+import javax.swing.ImageIcon;
+
+import common.IReceiver;
+
+public interface IMini2ModelAdapter{
+
+	public String getName();
+
+	void sendDataPacket(String text, IReceiver receiver);
+
+	public void sendImage(ImageIcon image);
+}

@@ -1,0 +1,10 @@
+package view;
+
+import common.IReceiver;
+
+public interface IMini2ModelAdapter{
+
+	public String getName();
+
+	void sendDataPacket(String text, IReceiver receiver);
+}

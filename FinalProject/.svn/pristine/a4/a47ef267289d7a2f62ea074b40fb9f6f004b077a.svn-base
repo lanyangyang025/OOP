@@ -1,0 +1,198 @@
+package yl128_pg23.game.server.cmd;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+
+import javax.swing.SwingUtilities;
+
+import common.DataPacketCR;
+import common.DataPacketCRAlgoCmd;
+import common.ICRCmd2ModelAdapter;
+import common.IReceiver;
+import provided.mixedData.MixedDataKey;
+import yl128_pg23.game.server.controller.GameController;
+import yl128_pg23.game.server.datatype.AddGameMessageType;
+import yl128_pg23.game.server.model.IPosition;
+import yl128_pg23.game.server.model.Team;
+import yl128_pg23.model.ChatRoom;
+import yl128_pg23.model.ICR2GameAdapter;
+
+public class AddGameMessageCmd extends DataPacketCRAlgoCmd<AddGameMessageType> {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 455333575494285643L;
+
+	private transient ICRCmd2ModelAdapter cmd2ModelAdapter;
+
+	/**
+	 *  May want larger or different type of blocking queue
+	 */
+	private BlockingQueue<Runnable> bq = new LinkedBlockingQueue<Runnable>(5);
+
+	private ChatRoom cr;
+
+	private IReceiver receiver;
+
+	public AddGameMessageCmd(ChatRoom cr, ICRCmd2ModelAdapter cmd2ModelAdpt) {
+		this.cr = cr;
+		this.cmd2ModelAdapter = cmd2ModelAdpt;
+	}
+
+	@Override
+	public void setCmd2ModelAdpt(ICRCmd2ModelAdapter cmd2ModelAdpt) {
+		this.cmd2ModelAdapter = cmd2ModelAdpt;
+	}
+
+	@Override
+	public String apply(Class<?> index, DataPacketCR<AddGameMessageType> host, String... params) {
+		// TODO Auto-generated method stub
+		//start game MVC
+		receiver = host.getSender();
+		final GameController[] c = new GameController[1]; // One-element array trick to get around the "final"
+		UUID gameID = UUID.fromString(GameController.getGameId());
+		
+		try {
+			SwingUtilities.invokeAndWait(new Runnable() { // Must use invokeAndWait, not invokeLater so that controller will be a valid instance when the job processing loop starts below.
+				public void run() {
+					c[0] = new GameController(receiver, cr); // Controller, incl. GUI, is constructed on GUI thread
+					c[0].start(); // Always show the GUI on the GUI thread.
+				}
+			});
+		} catch (InvocationTargetException | InterruptedException e1) {
+			System.err.println("main(): Exception in instantiating controller = " + e1);
+			e1.printStackTrace();
+		}
+		
+		
+		ICR2GameAdapter cr2gameAdpater = new ICR2GameAdapter() {
+
+			@Override
+			public void appendMsgGlobal(String text) {
+				// TODO Auto-generated method stub
+				bq.add(new Runnable() {
+					
+					@Override
+					public void run() {
+						c[0].getGameView().appendToGlobal(text);
+
+					}
+				});	
+			}
+
+			@Override
+			public void getTeamReady(Team team) {
+				// TODO Auto-generated method stub
+				bq.add(new Runnable() {
+					
+					@Override
+					public void run() {
+						c[0].getGameModel().showTeamNum(team);
+						
+					}
+				});
+			}
+
+			@Override
+			public void appendChatMsg(String text, Team team) {
+				// TODO Auto-generated method stub
+				bq.add(new Runnable() {
+					
+					@Override
+					public void run() {
+						c[0].getGameModel().appendChatMsg(text, team);
+						
+					}
+				});				
+			}
+
+			@Override
+			public void sendStart(Team team) {
+				// TODO Auto-generated method stub
+				bq.add(new Runnable() {
+					
+					@Override
+					public void run() {
+						c[0].getGameModel().sendStart(team);
+						
+					}
+				});					
+			}
+
+			@Override
+			public void sendPosition(Team team, IPosition position) {
+				// TODO Auto-generated method stub
+				bq.add(new Runnable() {
+					
+					@Override
+					public void run() {
+						c[0].getGameModel().sendPosition(team, position);
+						
+					}
+				});				
+			}
+
+			@Override
+			public void startGameReady(Team team, List<IPosition> ls) {
+				// TODO Auto-generated method stub
+				bq.add(new Runnable() {
+					
+					@Override
+					public void run() {
+						c[0].getGameModel().startGameReady(team, ls);
+						
+					}
+				});					
+			}
+
+			@Override
+			public void findPosition(Team team, IPosition position) {
+				// TODO Auto-generated method stub
+				bq.add(new Runnable() {
+					
+					@Override
+					public void run() {
+						c[0].getGameModel().findTrea(team, position);
+						
+					}
+				});					
+			}
+
+			@Override
+			public void showResult(Team team) {
+				// TODO Auto-generated method stub
+				bq.add(new Runnable() {
+					
+					@Override
+					public void run() {
+						c[0].getGameModel().showResult(team);
+						
+					}
+				});					
+			}
+		};
+		
+		MixedDataKey<ICR2GameAdapter> adapterKey = 
+				new MixedDataKey<>(gameID, GameController.getDes(), ICR2GameAdapter.class);
+		cmd2ModelAdapter.put(adapterKey, cr2gameAdpater);
+		
+
+		// Go into infinite loop, waiting for Runnable jobs to perform on the main thread.
+		while (true) {
+			try {
+				System.out.println("Waiting for main thread jobs..");
+				Runnable r = bq.take(); // Pull the next available job out of the queue, otherwise block
+				System.out.println("Found and now running job: " + r);
+				r.run(); // Run the job.
+			} catch (InterruptedException e) {
+				System.err.println("Exception in blocking queue: " + e);
+				e.printStackTrace();
+			}
+		}
+	}
+
+}

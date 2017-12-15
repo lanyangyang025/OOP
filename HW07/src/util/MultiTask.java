@@ -1,0 +1,127 @@
+package util;
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+
+import provided.client.model.taskUtils.ITaskFactory;
+import provided.compute.ILocalTaskViewAdapter;
+import provided.compute.ITask;
+import provided.compute.ITaskResultFormatter;
+
+/**
+ * This class is used to create multiple tasks
+ * @author Zihan Wang
+ *
+ */
+public class MultiTask implements ITask<ArrayList<Object>>{
+	
+	/**
+	 * UID for well-defined serialization
+	 */
+	private static final long serialVersionUID = 57863409L;
+	
+	/**
+     * Adapter to the local view.  Marked "transient" so that it is not serialized
+     * and instead is re-attached at the destination (the server).  
+     */
+	private transient ILocalTaskViewAdapter taskView = ILocalTaskViewAdapter.DEFAULT_ADAPTER;
+	
+	
+	/**
+	 * Components of MultiTask
+	 */
+	private ITask<?> task1, task2;
+	
+	
+	/**
+	 * Constructor of MultiTask
+	 * @param task1 Component1
+	 * @param task2 Component2
+	 */
+	public MultiTask(ITask<?> task1, ITask<?> task2) {
+		taskView.append("MultiTask " + task1 + "and" + task2 + " constructing...\n");
+		this.task1 = task1;
+		this.task2 = task2;
+	}
+	
+	/**
+	   * Executes the task and returns the list of result of its components
+	   * @return The list of result of its components
+	   * @throws RemoteException  thrown when a network error occurs.
+	   */
+	@Override
+	public ArrayList<Object> execute() throws RemoteException {
+		// TODO Auto-generated method stub
+		ArrayList<Object> res = new ArrayList<>();
+		taskView.append("MultiTask executing\n");
+		
+		taskView.append("(Executing task #1)");
+		
+		res.add(task1.execute());
+		
+		
+		taskView.append("(Excuting task #2)");
+		
+		res.add(task2.execute());
+		return res;
+	}
+	
+	/**
+	 * Reinitializes transient fields upon deserialization. See the <a href=
+	 * "http://download.oracle.com/javase/6/docs/api/java/io/Serializable.html">
+	 * Serializable</a> marker interface docs.
+	 * taskView is set to a default value for now (ILocalTaskViewAdapter.DEFAULT_ADAPTER).
+	 * 
+	 * @param stream
+	 *            The object stream with the serialized data
+     * @throws IOException if the input stream cannot be read correctly
+     * @throws ClassNotFoundException if the class file associated with the input stream cannot be located.
+	 */
+	private void readObject(ObjectInputStream stream) throws IOException,
+			ClassNotFoundException {
+		stream.defaultReadObject(); // Deserialize the non-transient data
+		taskView = ILocalTaskViewAdapter.DEFAULT_ADAPTER; // re-initialize the transient field
+	}
+
+	/**
+	   * Sets the adapter to the view properly for this object.
+	   * Note that this setter must be separate from the an ITask implementation's 
+	   * constructor because the compute engine needs to set this adapter when
+	   * it receives an ITask from a remote client. 
+	   * @param viewAdapter an adapter to the view.
+	   */
+	@Override
+	public void setTaskViewAdapter(ILocalTaskViewAdapter viewAdapter) {
+		// TODO Auto-generated method stub
+		this.taskView = viewAdapter;
+		task1.setTaskViewAdapter(taskView);
+		task2.setTaskViewAdapter(taskView);
+		taskView.append("Mutitask "  + task1 + "and" + task2 + " installed");
+	}
+
+	/**
+	   * Get an instance of the matched ITaskResultFormatter for this task.
+	   * Return a string of the form:
+	   * "MultiTask Results: \n (1) [result1] \n (2) [result2]\n"
+	   * @return A formatter customized for this task object.
+	   */
+	@Override
+	public ITaskResultFormatter<ArrayList<Object>> getFormatter() {
+		// TODO Auto-generated method stub
+		return new ITaskResultFormatter<ArrayList<Object>>() {
+
+			@Override
+			public String format(ArrayList<Object> result) {
+				// TODO Auto-generated method stub
+				String res = "MultiTask Results: \n";
+				
+				res += ("(1)" + ((ITaskResultFormatter<Object>) task1.getFormatter()).format(result.get(0)) + "\n");
+				res += ("(2)" + ((ITaskResultFormatter<Object>) task2.getFormatter()).format(result.get(1)) + "\n");
+				return res;
+			}
+			
+		};
+	}
+}

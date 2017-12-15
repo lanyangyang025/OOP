@@ -1,0 +1,36 @@
+package strategy;
+
+import java.awt.Point;
+
+import ball.Ball;
+import util.Randomizer;
+
+/**
+ * a strategy of changing the ball's velocity randomly
+ * @author Ye Wang
+ * @author Dai Li
+ *
+ */
+public class DrunkenStrategy extends IUpdateStrategy {
+
+	/**
+	 * the time slot between speed changing
+	 */
+	int cnt = 10;
+	
+	/**
+	 * change the ball's velocity randomly
+	 * @param ball the ball under operationx
+	 */
+	@Override
+	public void updateState(Ball ball) {
+		cnt--;
+			if (cnt == 0) {
+				int newX = Randomizer.singleton.randomInt(0, 30);
+				int newY = Randomizer.singleton.randomInt(0, 30);
+				ball.setVelocity(new Point(newX, newY));
+		cnt = 10;
+		}
+	}
+
+}

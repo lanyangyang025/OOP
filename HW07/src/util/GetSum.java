@@ -1,0 +1,147 @@
+package util;
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.rmi.RemoteException;
+import java.util.HashSet;
+
+import provided.client.model.taskUtils.ITaskFactory;
+import provided.compute.ILocalTaskViewAdapter;
+import provided.compute.ITask;
+import provided.compute.ITaskResultFormatter;
+
+/**
+ * Task that return the sum of all the input integers
+ * @author Zihan Wang
+ *
+ */
+public class GetSum implements ITask<Integer>{
+	
+	/**
+	 * SerialversionUID for well-defined serialization.
+	 */
+    private static final long serialVersionUID = 556L;
+    
+    /**
+     * Adapter to the local view.  Marked "transient" so that it is not serialized
+     * and instead is reattached at the destination (the server).  
+     */
+    private transient ILocalTaskViewAdapter taskView = ILocalTaskViewAdapter.DEFAULT_ADAPTER;
+
+    /**
+	 * Number array to store the inputs
+	 */
+	int[] numbers;
+	
+	public GetSum(int[] numbers) {
+		taskView.append("GetSum constructing...");
+		this.numbers = numbers;
+	}
+    
+	/**
+	   * Executes the task and returns a result
+	   * return the sum of all input integers
+	   * @return The result of executing the task.
+	   * @throws RemoteException  thrown when a network error occurs.
+	   */
+	@Override
+	public Integer execute() throws RemoteException {
+		taskView.append("Executing GetSum with input integers: " + arrayToString() + ".");
+		// TODO Auto-generated method stub
+		int sum = 0;
+		
+		for (int i = 0; i < numbers.length; i++) {
+			sum += numbers[i];
+		}
+		
+		return sum;
+	}
+	
+	/**
+	 * Reinitializes transient fields upon deserialization. See the <a href=
+	 * "http://download.oracle.com/javase/6/docs/api/java/io/Serializable.html">
+	 * Serializable</a> marker interface docs.
+	 * taskView is set to a default value for now (ILocalTaskViewAdapter.DEFAULT_ADAPTER).
+	 * 
+	 * @param stream
+	 *            The object stream with the serialized data
+     * @throws IOException if the input stream cannot be read correctly
+     * @throws ClassNotFoundException if the class file associated with the input stream cannot be located.
+	 */
+	private void readObject(ObjectInputStream stream) throws IOException,
+			ClassNotFoundException {
+		stream.defaultReadObject(); // Deserialize the non-transient data
+		taskView = ILocalTaskViewAdapter.DEFAULT_ADAPTER; // re-initialize the transient field
+	}
+	
+	/**
+	   * Sets the adapter to the view properly for this object.
+	   * Note that this setter must be separate from the an ITask implementation's 
+	   * constructor because the compute engine needs to set this adapter when
+	   * it receives an ITask from a remote client. 
+	   * @param viewAdapter an adapter to the view.
+	   */
+	@Override
+	public void setTaskViewAdapter(ILocalTaskViewAdapter viewAdapter) {
+		// TODO Auto-generated method stub
+		this.taskView = viewAdapter;
+		viewAdapter.append("GetSum installed!\n");
+	}
+
+	/**
+	   * Get an instance of the matched ITaskResultFormatter for this task.
+	   * Return a string of the form:
+	   * "Sum is [result] (input = [input])"
+	   * @return A formatter customized for this task object.
+	   */
+	@Override
+	public ITaskResultFormatter<Integer> getFormatter() {
+		// TODO Auto-generated method stub
+		return new ITaskResultFormatter<Integer>() {
+
+			@Override
+			public String format(Integer result) {
+				// TODO Auto-generated method stub
+				return "Sum is " + result + "(input = " + arrayToString() + ")";
+			}
+			
+		};
+	}
+	
+	/**
+	 * An ITaskFactory for this task
+	 */
+	public static final ITaskFactory<Integer> FACTORY = new ITaskFactory<Integer>() {
+
+		@Override
+		public ITask<Integer> make(String param) {
+			// TODO Auto-generated method stub
+			String[] strings = param.split(",");
+			int[] numbers = new int[strings.length];
+			
+			for (int i = 0; i < strings.length; i++) {
+				numbers[i] = Integer.parseInt(strings[i]);
+			}
+			
+			return new GetSum(numbers);
+		}
+		
+		@Override
+		public String toString() {
+			return GetSum.class.getName();
+		}
+	};
+
+	/**
+	 * Used to convert the array to string so that it could be shown on the text area
+	 * @return the string format of the array
+	 */
+	private String arrayToString() {
+		StringBuilder sb = new StringBuilder("[");
+		for (int i = 0; i < numbers.length - 1; i++) {
+			sb.append(numbers[i] + ", ");
+		}
+		sb.append(numbers[numbers.length - 1] + "]");
+		return sb.toString();
+	}
+}

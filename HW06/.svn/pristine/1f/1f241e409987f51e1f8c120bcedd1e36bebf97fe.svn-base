@@ -1,0 +1,31 @@
+package view;
+
+/**
+ * @author Alexander Hansen
+ *
+ */
+public interface IView2ModelControlAdapter {
+
+	/**
+	 * load the given file.
+	 * @return 
+	 */
+	public String loadFile(String filename);
+
+	/**
+	 * parse the given file.
+	 */
+	public String parseFile();
+	
+	/**
+	 * play the loaded file.
+	 */
+	public void playFile();
+	
+	/**
+	 * stop the given file.
+	 */
+	public void stopFile();
+	
+
+}

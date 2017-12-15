@@ -1,0 +1,469 @@
+package yl128_pg23.game.server.view;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+
+import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.util.WWUtil;
+import yl128_pg23.game.map.IRightClickAction;
+import yl128_pg23.game.map.MapLayer;
+import yl128_pg23.game.map.MapPanel;
+import yl128_pg23.game.server.model.Place;
+import yl128_pg23.game.server.model.Team;
+
+import javax.swing.JTextField;
+import javax.swing.JButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
+import javax.swing.Timer;
+import javax.swing.JLabel;
+import javax.swing.JComboBox;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+
+/**
+ * The game view of the game
+ * @author Yiqing Lu
+ *
+ */
+
+public class GameView extends JFrame {
+
+	private static final long serialVersionUID = 1L;
+	private Team team;
+
+	public JPanel contentPane;
+
+	private MapPanel map;
+
+	private JTextField textFieldUpper;
+
+	private IGameView2ModelAdapter _gameView2ModelAdapter;
+	private JTextField textField_1;
+
+	private JSplitPane splitPaneLeft = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+
+	private JSplitPane splitPaneUpper = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+
+	private JSplitPane splitPaneLower = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+
+	private JTextArea textArea = new JTextArea();
+
+	private JTextArea textArea_3 = new JTextArea();
+
+	private JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+
+	private JLabel label_2 = new JLabel("0");
+
+	private JLabel label_4 = new JLabel("0");
+
+	private Timer timer;
+	private int time;
+	private final JLabel lblChooseTeam = new JLabel("Choose Team:");
+	private JComboBox<Team> comboBox = new JComboBox<Team>();
+	private final JButton btnNewButton = new JButton("Join Team");
+	private final JLabel lblTeamYouChoose = new JLabel("Team you choose:");
+	private final JLabel label_1 = new JLabel("");
+	private final JLabel label_3 = new JLabel("0");
+	JButton button_1 = new JButton("Place");
+	private boolean teamAStart = false, teamBStart = false;
+	IRightClickAction rigthClickAction;
+	private final JLabel label_6 = new JLabel("");
+	private final JLabel label_7 = new JLabel("");
+	JButton button_2 = new JButton("Finish");
+	private boolean teamAFinish = false, teamBFinish = false;
+	private final JLabel label_8 = new JLabel("");
+	private final JLabel label_9 = new JLabel("");
+
+	public GameView(IGameView2ModelAdapter iGameView2ModelAdapter, IRightClickAction iRightClickAction) {
+		this._gameView2ModelAdapter = iGameView2ModelAdapter;
+		this.rigthClickAction = iRightClickAction;
+		this.initGUI(rigthClickAction);
+	}
+
+	public void initGUI(IRightClickAction rigthClickAction2) {
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setBounds(300, 300, 1050, 800);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		contentPane.setLayout(new BorderLayout(0, 0));
+		setContentPane(contentPane);
+		map = new MapPanel();
+		map.addRightClickAction(rigthClickAction2);
+
+		JSplitPane splitPane = new JSplitPane();
+		contentPane.add(splitPane, BorderLayout.CENTER);
+		splitPane.setRightComponent(map);
+		splitPane.setResizeWeight(0.2);
+		splitPaneLeft.setToolTipText("The big panel to hold chatrooms");
+
+		splitPane.setLeftComponent(splitPaneLeft);
+		splitPaneLeft.setResizeWeight(0.4);
+
+		tabbedPane.setToolTipText("The tab panel to hold chatrooms");
+
+		splitPaneLeft.setRightComponent(tabbedPane);
+		comboBox.addItem(new Team("Team A"));
+		comboBox.addItem(new Team("Team B"));
+
+		JPanel panel_3 = new JPanel();
+		panel_3.setPreferredSize(new Dimension(200, 768));
+		tabbedPane.addTab("Game", null, panel_3, null);
+		panel_3.setLayout(null);
+
+		JLabel lblTeamAPlayers = new JLabel("Team A Players:");
+		lblTeamAPlayers.setBounds(32, 248, 124, 33);
+		lblTeamAPlayers.setPreferredSize(new Dimension(150, 30));
+		panel_3.add(lblTeamAPlayers);
+
+		label_2.setBounds(168, 248, 34, 33);
+		panel_3.add(label_2);
+
+		JLabel lblTeamBPlayers = new JLabel("Team B Players:");
+		lblTeamBPlayers.setBounds(32, 304, 130, 33);
+		lblTeamBPlayers.setPreferredSize(new Dimension(150, 30));
+		panel_3.add(lblTeamBPlayers);
+
+		label_4.setBounds(168, 304, 34, 33);
+		panel_3.add(label_4);
+
+		button_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				_gameView2ModelAdapter.startPlace();
+			}
+		});
+		button_1.setBounds(32, 389, 150, 33);
+		button_1.setToolTipText("Once everyone is ready, press this button to start the game.");
+		button_1.setPreferredSize(new Dimension(150, 30));
+		button_1.setEnabled(false);
+		panel_3.add(button_1);
+
+		JLabel label_5 = new JLabel("Remaining Time:");
+		label_5.setBounds(32, 452, 116, 33);
+		panel_3.add(label_5);
+
+		button_2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				waittoStart();
+			}
+		});
+		button_2.setBounds(32, 497, 150, 33);
+		button_2.setToolTipText("Once everyone is ready, press this button to start the game.");
+		button_2.setPreferredSize(new Dimension(150, 30));
+		button_2.setEnabled(false);
+		panel_3.add(button_2);
+		lblChooseTeam.setPreferredSize(new Dimension(150, 30));
+		lblChooseTeam.setBounds(32, 41, 124, 33);
+
+		panel_3.add(lblChooseTeam);
+		comboBox.setBounds(160, 45, 116, 27);
+
+		panel_3.add(comboBox);
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Team team = comboBox.getItemAt(comboBox.getSelectedIndex());
+				_gameView2ModelAdapter.sendReady(team);
+				btnNewButton.setEnabled(false);
+			}
+		});
+		btnNewButton.setBounds(159, 112, 117, 29);
+
+		panel_3.add(btnNewButton);
+		lblTeamYouChoose.setPreferredSize(new Dimension(150, 30));
+		lblTeamYouChoose.setBounds(32, 192, 124, 33);
+
+		panel_3.add(lblTeamYouChoose);
+		label_1.setBounds(184, 192, 92, 33);
+
+		panel_3.add(label_1);
+		label_3.setBounds(184, 452, 92, 33);
+
+		panel_3.add(label_3);
+		label_6.setBounds(230, 248, 143, 33);
+
+		panel_3.add(label_6);
+		label_7.setBounds(230, 304, 143, 33);
+
+		panel_3.add(label_7);
+		label_8.setBounds(32, 557, 219, 33);
+
+		panel_3.add(label_8);
+		label_9.setBounds(32, 609, 219, 33);
+
+		panel_3.add(label_9);
+
+		// Add global chat room onto the panel
+		tabbedPane.addTab("To EveryOne", splitPaneLower);
+		tabbedPane.addTab("Within Team", splitPaneUpper);
+
+		JScrollPane scrollPane = new JScrollPane();
+		splitPaneUpper.setLeftComponent(scrollPane);
+		textArea_3.setToolTipText("The world chatroom");
+		textArea.setToolTipText("The global chatroom");
+		scrollPane.setViewportView(textArea_3);
+
+		JPanel panel_1 = new JPanel();
+		panel_1.setToolTipText("The panel to hold the button and text messages");
+		splitPaneUpper.setRightComponent(panel_1);
+		splitPaneUpper.setResizeWeight(0.9);
+
+		textFieldUpper = new JTextField();
+		textFieldUpper.setToolTipText("The text box for input a text message");
+		panel_1.add(textFieldUpper);
+		textFieldUpper.setColumns(10);
+
+		JButton btnSendUpper = new JButton("Send");
+		btnSendUpper.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				_gameView2ModelAdapter.sendMsgRoom(textFieldUpper.getText());
+				textFieldUpper.setText("");
+			}
+		});
+
+		btnSendUpper.setToolTipText("The button to send out the messages");
+		panel_1.add(btnSendUpper);
+
+		JScrollPane scrollPane_1 = new JScrollPane();
+		splitPaneLower.setLeftComponent(scrollPane_1);
+		splitPaneLower.setResizeWeight(0.9);
+		scrollPane_1.setViewportView(textArea);
+
+		JPanel panel_2 = new JPanel();
+		panel_2.setToolTipText("The panel to hold the button and text messages.");
+		splitPaneLower.setRightComponent(panel_2);
+
+		textField_1 = new JTextField();
+		textField_1.setToolTipText("The box to input the messages");
+		panel_2.add(textField_1);
+		textField_1.setColumns(10);
+
+		JButton btnSend = new JButton("Send");
+		btnSend.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				_gameView2ModelAdapter.sendMsgGlobal(textField_1.getText());
+				textField_1.setText("");
+			}
+		});
+		btnSend.setToolTipText("The send button to send out the messages");
+
+		panel_2.add(btnSend);
+		textArea_3.setEditable(false);
+		textArea.setEditable(false);
+	}
+
+	public void start() {
+		map.start();
+		setVisible(true);
+		textArea.append("Welcome to our Game! \n");
+
+		Dimension size = new Dimension(1200, 800);
+		this.setPreferredSize(size);
+		this.pack();
+		WWUtil.alignComponent(null, this, AVKey.CENTER);
+
+	}
+
+	/**
+	 * time method
+	 * @param seconds
+	 * @param label
+	 */
+	public void initTimer(int seconds, JLabel label) {
+
+		if (this.timer != null) {
+			this.timer.stop();
+		}
+		this.time = seconds;
+		label.setText(getStandardTime(this.time));
+		this.timer = new Timer(1000, (e) -> {
+			this.time -= 1;
+			if (this.time >= 0) {
+				label.setText(getStandardTime(this.time));
+				// Set the color of words to be red, if less than 30 seconds are left.
+				if (this.time == 30) {
+					label.setForeground(Color.red);
+				}
+			}
+			if (this.time == 0) {
+				waittoStart();
+			}
+		});
+		// Start the timer
+		this.timer.start();
+	}
+
+	private String getStandardTime(int num) {
+		return " " + Integer.toString(num / 60) + " : " + Integer.toString(num % 60);
+	}
+
+	/**
+	 * append text to global
+	 * @param text
+	 */
+	public void appendToGlobal(String text) {
+		this.textArea.append(text + "\n");
+	}
+
+	/**
+	 * append text to team
+	 * @param text
+	 */
+	public void appendToTeamChat(String text) {
+		this.textArea_3.append(text + "\n");
+	}
+
+	public void alert(String msg) {
+		JOptionPane.showMessageDialog(null, msg);
+	}
+
+	/**
+	 * The method to add another map layers
+	 * @param _layer the map layer to be added
+	 */
+	public void addMapLayer(MapLayer _layer) {
+		map.addLayer(_layer);
+	}
+
+	/**
+	 * show the team in text area
+	 * @param team
+	 */
+	public void showTeam(Team team) {
+		// TODO Auto-generated method stub
+		label_1.setText(team.toString());
+	}
+
+	/**
+	 * show the maximum number of treasures the team needs to find
+	 * @param team
+	 */
+	public void showTeamNum(Team team) {
+		// TODO Auto-generated method stub
+		this.setTeam(team);
+		if (team.toString().equals("Team A")) {
+			int size = Integer.parseInt(label_2.getText());
+			label_2.setText("" + (size + 1));
+		} else {
+			int size = Integer.parseInt(label_4.getText());
+			label_4.setText("" + (size + 1));
+		}
+
+	}
+
+	public void enableStart() {
+		button_1.setEnabled(true);
+	}
+
+	/**
+	 * the team is ready to place treasures
+	 * @param team2
+	 */
+	public void sendStart(Team team2) {
+		// TODO Auto-generated method stub
+		if (team2.toString().equals("Team A")) {
+			teamAStart = true;
+			label_6.setText("Team A is ready");
+			label_6.setForeground(Color.RED);
+		} else {
+			teamBStart = true;
+			label_7.setText("Team B is ready");
+			label_7.setForeground(Color.RED);
+		}
+
+		if (teamAStart && teamBStart) {
+			initTimer(90, label_3);
+			_gameView2ModelAdapter.setStart();
+			button_2.setEnabled(true);
+		}
+	}
+
+	public void unableStart() {
+		// TODO Auto-generated method stub
+		button_1.setEnabled(false);
+	}
+
+	public void addPlace(Place p) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void removeMapLayer(MapLayer layer) {
+		// TODO Auto-generated method stub
+		map.removeLayer(layer);
+	}
+
+	/**
+	 * delete team in comboBox
+	 * @param t
+	 */
+	public void unableJoin(Team t) {
+		// TODO Auto-generated method stub
+		for (int i = 0; i < comboBox.getItemCount(); i++) {
+			if (comboBox.getItemAt(i).equals(t)) {
+				comboBox.removeItemAt(i);
+				break;
+			}
+		}
+	}
+
+	/**
+	 * get the number of the team members
+	 * @param team2
+	 * @return
+	 */
+	public int getPlaceNum(Team team2) {
+		// TODO Auto-generated method stub
+		if (team2.toString().equals("Team A")) {
+			return Integer.parseInt(label_4.getText());
+		} else {
+			return Integer.parseInt(label_2.getText());
+		}
+	}
+
+	public void waittoStart() {
+		// TODO Auto-generated method stub
+		_gameView2ModelAdapter.waitToStart();
+	}
+
+	public void unableFinish() {
+		// TODO Auto-generated method stub
+		timer.stop();
+		button_2.setEnabled(false);
+	}
+
+	/**
+	 * the team is ready to play
+	 * @param team2
+	 */
+	public void sendTeamStart(Team team2) {
+		// TODO Auto-generated method stub
+		if (team2.toString().equals("Team A")) {
+			teamAFinish = true;
+			label_8.setText("Team A finishes placing");
+			label_8.setForeground(Color.RED);
+		} else {
+			teamBFinish = true;
+			label_9.setText("Team B finishes placing");
+			label_9.setForeground(Color.RED);
+		}
+		if (teamAFinish && teamBFinish) {
+			System.out.println("game start");
+			_gameView2ModelAdapter.sendPositions();
+		}
+	}
+
+	public Team getTeam() {
+		return team;
+	}
+
+	public void setTeam(Team team) {
+		this.team = team;
+	}
+}

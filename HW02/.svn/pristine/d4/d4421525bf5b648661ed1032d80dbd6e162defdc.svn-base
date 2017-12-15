@@ -1,0 +1,72 @@
+package model.Balls;
+
+import java.awt.*;
+
+public abstract class ABall {
+	private Coordinate origin = new Coordinate(50,50);
+	private Coordinate velocity = new Coordinate(10,10);
+	private Color color = Color.BLUE;
+	private int radius = 10;
+	private Container canvas;
+
+	public void paint(Graphics g) {
+		g.setColor(get_color()); // Set the color to use when drawing
+		g.fillOval(get_x(), get_y(), radius, radius); // paint a filled 20x40 red ellipse whose upper left corner is at (75, 100)
+	};
+
+	public ABall(Coordinate origin, Color color, int radius, Coordinate velocity, Container canvas) {
+		this.origin = origin;
+		this.color=color;
+		this.radius= radius;
+		this.velocity = velocity;
+		this.canvas = canvas;
+	}
+	
+	public int get_x() {
+		return origin.get_x();
+	}
+	public int get_y() {
+		return origin.get_y();
+	}
+	public Color get_color() {
+		return this.color;
+	}
+	public int get_radius() {
+		return this.radius;
+	}
+	public int get_x_velocity() {
+		return velocity.get_x();
+	}
+	public int get_y_velocity() {
+		return velocity.get_y();
+	}
+	
+	public Coordinate canvas_getSize() {
+		int width = canvas.getWidth();
+		int height = canvas.getHeight();
+		return new Coordinate(width, height);
+	}
+	
+
+	public void new_location(Coordinate location, Coordinate velocity) {
+		int x_new = location.get_x() + velocity.get_x();
+		int y_new = location.get_y() + velocity.get_y();
+		origin = new Coordinate(x_new, y_new);
+	}
+	
+}
+
+class Coordinate{
+	private int x; 
+	private int y;
+	public Coordinate(int x, int y) {
+		this.x = x;
+		this.y = y;
+	}
+	public int get_x() {
+		return x;
+	}
+	public int get_y() {
+		return y;
+	}
+}

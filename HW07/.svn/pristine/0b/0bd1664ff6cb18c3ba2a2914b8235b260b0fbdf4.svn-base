@@ -1,0 +1,7 @@
+package view;
+
+public interface IEngineModelAdapter {
+	public void quit();
+	
+	public void sendMsg(String s);
+}

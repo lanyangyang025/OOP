@@ -1,0 +1,26 @@
+package yl128_pg23.model.datatype;
+
+import common.ICRMessageType;
+
+/**
+
+* 
+ * @author Yiqing Lu
+ *  *
+ */
+public class GameMsgGlobalType implements ICRMessageType {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 198758132833735004L;
+	String text;
+
+	public GameMsgGlobalType(String text) {
+		this.text = text;
+	}
+
+	public String getString() {
+		return text;
+	}
+}

@@ -1,0 +1,58 @@
+package model.Balls;
+
+import java.awt.*;
+
+public abstract class ABall {
+	protected Point origin = new Point(50,50);
+	protected Point velocity = new Point(10,10);
+	protected Color color = Color.BLUE;
+	protected int radius = 10;
+	protected Container canvas;
+
+	public void paint(Graphics g) {
+		g.setColor(get_color()); // Set the color to use when drawing
+		g.fillOval(get_x(), get_y(), radius, radius); // paint a filled 20x40 red ellipse whose upper left corner is at (75, 100)
+	};
+
+	public ABall(Point origin, Color color, int radius, Point velocity, Container canvas) {
+		this.origin = origin;
+		this.color=color;
+		this.radius= radius;
+		this.velocity = velocity;
+		this.canvas = canvas;
+	}
+	
+	public int get_x() {
+		return origin.x;
+	}
+	public int get_y() {
+		return origin.y;
+	}
+	public Color get_color() {
+		return this.color;
+	}
+	public int get_radius() {
+		return this.radius;
+	}
+	public int get_x_velocity() {
+		return velocity.x;
+	}
+	public int get_y_velocity() {
+		return velocity.x;
+	}
+	
+	public Point canvas_getSize() {
+		int width = canvas.getWidth();
+		int height = canvas.getHeight();
+		return new Point(width, height);
+	}
+	
+
+	public void new_location(Point location, Point velocity) {
+		int x_new = location.x + velocity.x;
+		int y_new = location.y + velocity.y;
+		origin = new Point(x_new, y_new);
+	}
+	
+	public abstract void trace_ball();
+}

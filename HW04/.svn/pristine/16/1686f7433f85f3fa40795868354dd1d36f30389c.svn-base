@@ -1,0 +1,26 @@
+package strategy;
+
+import java.awt.Point;
+import ball.Ball;
+import util.Randomizer;
+/**
+ * a strategy of wandering about
+ * @author Ye Wang
+ * @author Yiqing Lu
+ *
+ */
+public class WanderStrategy extends IUpdateStrategy {
+	
+	/**
+	 * change the speed of ball by a random number ranges from -10 to 10
+	 */
+	@Override
+	public void updateState(Ball ball) {
+		
+		Point oldV = ball.getVelocity();
+		oldV.x=Randomizer.singleton.randomInt(-50, 50);
+		oldV.y=Randomizer.singleton.randomInt(-50, 50);
+		ball.setVelocity(oldV);
+	}
+
+}

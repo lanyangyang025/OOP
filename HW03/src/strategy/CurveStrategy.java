@@ -1,0 +1,24 @@
+package strategy;
+
+import model.Ball;
+import model.IUpdateStrategy;
+
+/**
+ * CurveStrategy will make a ball change its velcotiy at a certain angle every tick
+ * @author Renqin Yang
+ * @author Yiqing Lu
+ *
+ */
+public class CurveStrategy implements IUpdateStrategy {
+
+	double theta = Math.PI / 12;
+
+	@Override
+	public void updateState(Ball ball) {
+		int old_Vx = ball.velocity.x;
+		int old_Vy = ball.velocity.y;
+		ball.velocity.x = (int) Math.floor((Math.cos(theta) * old_Vx - Math.sin(theta) * old_Vy));
+		ball.velocity.y = (int) Math.floor(Math.cos(theta) * old_Vy + Math.sin(theta) * old_Vx);
+	}
+
+}

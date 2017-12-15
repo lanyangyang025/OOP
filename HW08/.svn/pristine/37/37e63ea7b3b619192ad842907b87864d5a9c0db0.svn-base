@@ -1,0 +1,325 @@
+package view;
+
+import java.awt.BorderLayout;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+import javax.swing.JTextField;
+import java.awt.GridLayout;
+import javax.swing.JLabel;
+import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.awt.event.ActionEvent;
+import javax.swing.border.TitledBorder;
+
+import common.IChatRoom;
+import common.IUser;
+
+import javax.swing.border.EtchedBorder;
+import java.awt.Color;
+import java.awt.Component;
+
+import javax.swing.JComboBox;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
+
+public class ChatappView extends JFrame {
+	
+	private static final long serialVersionUID = -7498032195784062517L;
+	private JPanel contentPane;
+	private final JPanel panel = new JPanel();
+	private final JTextField textField = new JTextField();
+	private final JTextField textField_1 = new JTextField();
+	private final JLabel lblUsername = new JLabel("User Name:");
+	private final JButton btnNewButton = new JButton("Start");
+	private final JPanel panel_2 = new JPanel();
+	private final JTextField textField_2 = new JTextField();
+	private final JButton btnCreate = new JButton("Create");
+	private final JPanel panel_3 = new JPanel();
+	private final JPanel panel_4 = new JPanel();
+	private final JTextField textField_3 = new JTextField();
+	private final JButton btnConnect = new JButton("Connect");
+	private final JPanel panel_5 = new JPanel();
+	private final JComboBox<String> comboBox = new JComboBox<String>();
+	private final JPanel panel_6 = new JPanel();
+	private final JButton btnRequest = new JButton("Join");
+	private final JButton btnExit = new JButton("Exit room");
+	private final JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+	private final JPanel panel_7 = new JPanel();
+	private final JTextArea textArea = new JTextArea();
+
+	IView2ModelAdapter _imodelAdapter;
+	
+	Map<String, IChatRoom> map1 = new HashMap<String, IChatRoom>();
+	Map<String, IUser> map2 = new HashMap<String, IUser>();
+	List<ChatroomView> ls = new ArrayList<>();
+	
+	IUser invite_user;
+	IChatRoom request_room;
+	
+	private final JLabel lblUserPort = new JLabel("User Port:");
+	private final JTextField textField_4 = new JTextField();
+	private final JLabel lblChatroom = new JLabel("Server Port:");
+	private final JTextField textField_5 = new JTextField();
+	private final JLabel label = new JLabel("Server Name:");
+	private final JLabel label_1 = new JLabel("User Name:");
+	private final JTextField textField_6 = new JTextField();
+	private final JLabel lblChatrooms = new JLabel("Chatrooms:");
+	private final JLabel lblUser = new JLabel("User:");
+	private final JComboBox<String> comboBox_1 = new JComboBox<String>();
+	private final JPanel panel_8 = new JPanel();
+	private final JPanel panel_9 = new JPanel();
+	private final JButton btnClear = new JButton("Clear");
+	private final JButton btnGetChatrooms = new JButton("get Chatrooms");
+	private final JButton btnNewButton_1 = new JButton("Exit all rooms");
+
+	/**
+	 * Create the frame.
+	 */
+	public ChatappView(IView2ModelAdapter _imodelAdapter) {
+		this._imodelAdapter = _imodelAdapter;
+		initGUI();
+	}
+	
+	public void start() {
+		setVisible(true);
+	}
+	
+	private void initGUI() {
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 1060, 740);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		contentPane.setLayout(new BorderLayout(0, 0));
+		setContentPane(contentPane);
+		panel.setBackground(Color.LIGHT_GRAY);
+		
+		contentPane.add(panel, BorderLayout.NORTH);
+		panel_9.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Login", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
+		
+		panel.add(panel_9);
+		panel_9.setLayout(new GridLayout(0, 1, 0, 0));
+		panel_9.add(lblUsername);
+		panel_9.add(textField);
+		panel_9.add(lblUserPort);
+		panel_9.add(textField_4);
+		panel_9.add(lblChatroom);
+		panel_9.add(textField_5);
+		textField_5.setColumns(10);
+		panel_8.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Server address", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
+		
+		panel.add(panel_8);
+		panel_8.setLayout(new GridLayout(0, 1, 0, 0));
+		panel_8.add(textField_1);
+		textField_1.setColumns(10);
+		panel_8.add(btnNewButton);
+		
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				_imodelAdapter.createUser(textField.getText());
+			}
+		});
+		panel_2.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Make a chatroom!", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
+		
+		panel.add(panel_2);
+		panel_2.setLayout(new GridLayout(0, 1, 0, 0));
+		textField_2.setColumns(10);
+		
+		panel_2.add(textField_2);
+		btnCreate.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				_imodelAdapter.createChatRoom(textField_2.getText());
+			}
+		});
+		btnCreate.setToolTipText("");
+		
+		panel_2.add(btnCreate);
+		panel_3.setBorder(new TitledBorder(null, "Remote Host:", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		
+		panel.add(panel_3);
+		panel_4.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Connect to User", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
+		
+		panel_3.add(panel_4);
+		panel_4.setLayout(new GridLayout(0, 1, 0, 0));
+		
+		panel_4.add(label);
+		textField_3.setColumns(10);
+		
+		panel_4.add(textField_3);
+		btnConnect.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				_imodelAdapter.connect(textField_3.getText(), textField_6.getText());
+			}
+		});
+		
+		panel_4.add(label_1);
+		
+		panel_4.add(textField_6);
+		btnConnect.setToolTipText("");
+		
+		panel_4.add(btnConnect);
+		panel_5.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Display", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
+		
+		panel_3.add(panel_5);
+		panel_5.setLayout(new GridLayout(0, 1, 0, 0));
+		
+		panel_5.add(lblUser);
+		
+		panel_5.add(comboBox_1);
+		btnGetChatrooms.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				addToChatroom(_imodelAdapter.getChatRoom(map2.get(comboBox_1.getSelectedItem())));
+				
+			}
+		});
+		btnGetChatrooms.setToolTipText("");
+		
+		panel_5.add(btnGetChatrooms);
+		
+		panel_5.add(lblChatrooms);
+		
+		panel_5.add(comboBox);
+		panel_6.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Connected user", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
+		
+		panel_3.add(panel_6);
+		panel_6.setLayout(new GridLayout(0, 1, 0, 0));
+		btnRequest.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				_imodelAdapter.join(map1.get(comboBox.getSelectedItem()));
+			}
+		});
+		btnRequest.setToolTipText("");
+		
+		panel_6.add(btnRequest);
+		btnClear.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				setClear();
+			}
+		});
+		
+		panel_6.add(btnClear);
+		panel_6.add(btnExit);
+		btnExit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				leaveRoom(tabbedPane.getSelectedIndex()-1);
+			}
+		});
+		btnExit.setToolTipText("");
+		btnNewButton_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				for(int i=0; i<ls.size(); i++) {
+					leaveRoom(i);
+				}
+				
+			}
+		});
+		
+		panel_6.add(btnNewButton_1);
+		tabbedPane.setToolTipText("Tab Panel.");
+		
+		contentPane.add(tabbedPane, BorderLayout.CENTER);
+		
+		tabbedPane.addTab("New tab", null, panel_7, null);
+		
+		panel_7.setLayout(new BorderLayout(0, 0));
+		
+		panel_7.add(textArea, BorderLayout.CENTER);
+		
+		
+		this.addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent e) {
+				for(int i=0; i<ls.size(); i++) {
+					leaveRoom(i);
+				}
+			}
+
+		});
+	}
+
+	
+	public void setRemoteAdress(String string) {
+		textField_1.setText(string);
+	}
+
+	public void addTab(ChatroomView miniView) {
+		// TODO Auto-generated method stub
+		tabbedPane.addTab(miniView.getName(),miniView);
+		ls.add(miniView);
+	}
+	
+	public void removeTab(ChatroomView miniView) {
+		// TODO Auto-generated method stub
+		tabbedPane.remove(miniView);
+	}
+	
+	public void outputToTextArea(String string) {
+		// append string
+		textArea.append(string);
+		
+		// force scroll down to the newest string appended
+		textArea.setCaretPosition(textArea.getText().length());
+	}
+	
+	public int getUserPort() {
+		return Integer.parseInt(textField_4.getText());
+	}
+	
+	public int getServerPort() {
+		return Integer.parseInt(textField_5.getText());
+	}
+
+	public Component getTab() {
+		// TODO Auto-generated method stub
+		return tabbedPane.getSelectedComponent();
+	}
+	
+	public void setClear() {
+		textField_3.setText("");
+		textField_6.setText("");
+		comboBox.removeAll();
+		comboBox_1.removeAll();
+	}
+
+	public void addToChatroom(Collection<IChatRoom> iterable) {
+		// TODO Auto-generated method stub
+		comboBox.removeAllItems();
+		for(IChatRoom room: iterable) {
+			String name = room.getName();
+			comboBox.addItem(name);
+			map1.put(name, room);
+		}
+	}
+
+	public void addtoConnectUser(IUser newUser) {
+		// TODO Auto-generated method stub
+		try {
+			String name = newUser.getName();
+			if(!map2.keySet().contains(name)) {
+				comboBox_1.addItem(name);
+				map2.put(name, newUser);				
+			}
+
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void leaveRoom(int index) {
+		ChatroomView temp_roomview = ls.get(index);
+		temp_roomview.quit();
+		ls.remove(index);
+		tabbedPane.remove(index+1);
+		_imodelAdapter.leaveChatRoom(temp_roomview.getChatRoom());
+	}
+}

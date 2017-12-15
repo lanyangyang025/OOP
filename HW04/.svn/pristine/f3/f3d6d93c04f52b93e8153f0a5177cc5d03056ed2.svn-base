@@ -1,0 +1,7 @@
+package model.strategy;
+
+import model.strategy.IPaintStrategy;
+
+public abstract class IPaintFac {
+	public abstract IPaintStrategy make();
+}

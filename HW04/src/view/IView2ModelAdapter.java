@@ -1,0 +1,94 @@
+/**
+ * 
+ */
+package view;
+
+import java.awt.Graphics;
+
+import model.strategy.IPaintFac;
+import strategy.IStrategyFac;
+
+/**
+ * The interface of the adapter from the view to the model that enables the view to talk to the model.
+ * @author Yiqing Lu
+ * @author Ye Wang
+ */
+public interface IView2ModelAdapter {
+
+	/**
+	 * that load a ball from the model
+	 * @param fac the factory that will create the ball's strategy
+	 * @param paint_fac the factory that will create the ball's paint strategy
+	 * @param switchable if the bal's strategy can be switched
+	 */
+	public void loadBall(IStrategyFac fac, IPaintFac paint_fac, boolean switchable);
+
+	/**
+	 * method that tell model to update
+	 * @param g graphics
+	 */
+	public void update(Graphics g);
+
+	/**
+	 * method that tell model to clear all ball instance from its dispatcher
+	 */
+	public void clearAll();
+
+	public IPaintFac addPaintFac(String text);
+
+	/**
+	 * No-op singleton implementation of IView2ModelAdapter
+	 * See the web page on the Null Object Design Pattern at http://cnx.org/content/m17227/latest/
+	 */
+
+	public static final IView2ModelAdapter NULL_OBJECT = new IView2ModelAdapter() {
+
+		/**
+		 * method that tell model to update
+		 */
+		public void update(Graphics g) {
+
+		}
+
+		/**
+		 * method that tell model to clear all ball instance from its dispatcher
+		 */
+		public void clearAll() {
+
+		}
+
+		@Override
+		public IStrategyFac addStrategyFac(String text) {
+			return null;
+		}
+
+		@Override
+		public IPaintFac addPaintFac(String text) {
+			return null;
+		}
+
+		@Override
+		public IStrategyFac combineFac(IStrategyFac selectedItem, IStrategyFac selectedItem2) {
+
+			return null;
+		}
+
+		@Override
+		public void loadBall(IStrategyFac fac, IPaintFac paint_fac, boolean switchable) {
+
+		}
+
+		@Override
+		public void switchStrategy(IStrategyFac itemAt) {
+
+		}
+
+	};
+
+	public IStrategyFac addStrategyFac(String text);
+
+	public IStrategyFac combineFac(IStrategyFac selectedItem, IStrategyFac selectedItem2);
+
+	public void switchStrategy(IStrategyFac itemAt);
+
+}

@@ -1,0 +1,13 @@
+package model;
+
+import common.IReceiver;
+import view.ChatroomView;
+
+public interface IMini2ViewAdapter {
+
+	void append(String text);
+
+	void addUserList(IReceiver receiver);
+
+	ChatroomView getRoomView();
+}

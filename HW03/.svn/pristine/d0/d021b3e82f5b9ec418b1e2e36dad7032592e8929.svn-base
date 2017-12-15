@@ -1,0 +1,233 @@
+package view;
+
+import java.awt.BorderLayout;
+import java.awt.Graphics;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+import java.awt.Color;
+import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import javax.swing.JTextField;
+import javax.swing.JLabel;
+import javax.swing.JComboBox;
+import java.awt.GridLayout;
+import javax.swing.SwingConstants;
+
+/**
+ * GUI (or view) part of the whole application
+ * @author Renqin Yang
+ * @author Yiqing Lu
+ * @param <TDropListItem> droplistItem, as object
+ */
+public class BallGUI<TDropListItem> extends JFrame {
+
+	private static final long serialVersionUID = 5621850870582071800L;
+
+	/**
+	 * view to model adapter
+	 */
+	private IModelUpdateAdapter model_update;
+	private IModelControlAdapter<TDropListItem> model_control;
+	private JPanel contentPane;
+	private int count;
+	private final JPanel _pnlCanvas = new JPanel() {
+
+		private static final long serialVersionUID = -6952656931251224807L;
+
+		public void paintComponent(Graphics g) {
+			super.paintComponent(g); // Do everything normally done first, e.g. clear the screen.
+			//			g.setColor(Color.RED); // Set the color to use when drawing
+			//			g.fillOval(75, 100, 20, 20); // paint a filled 20x40 red ellipse whose upper left corner is at (75, 100) 
+			model_update.paint(g); // call back to the model to paint the sprites
+		}
+	};
+	private final JTextField _fieldText = new JTextField();
+	private final JPanel north_panel = new JPanel();
+	private final JButton _btnMakeball = new JButton("Make Selected Ball");
+	private final JLabel _lblText = new JLabel("New label");
+	private final JButton _btnClear = new JButton("Clear All");
+	private JComboBox<TDropListItem> _list1DL = new JComboBox<TDropListItem>();	private final JButton _brnAddList = new JButton("Add to list");
+	private final JPanel _pnlAdd = new JPanel();
+	private JComboBox<TDropListItem> _list2DL = new JComboBox<TDropListItem>();	private final JPanel _pnlCombine = new JPanel();
+	private final JButton _btnCombine = new JButton("Combine!");
+	private final JPanel panel = new JPanel();
+	private final JButton _btnSwitch = new JButton("Switch!");
+	private final JButton _btnMakeSwitch = new JButton("Make Switcher");
+	private final JPanel panel_1 = new JPanel();
+
+	/**
+	 * Launch the application.
+	 */
+
+	public void start() {
+		setVisible(true);
+	}
+
+	/**
+	 * Create the frame.
+	 * @param model_control the control adapter which helps the BallGUI part communicate the Ballmodel part
+	 * @param model_update  the update adapter which helps the BallGUI part communicate the Ballmodel part
+	 */
+	public BallGUI(IModelControlAdapter<TDropListItem> model_control, IModelUpdateAdapter model_update) {
+		this.model_control = model_control;
+		this.model_update = model_update;
+		initGUI();
+	}
+
+	private void initGUI() {
+		north_panel.setBackground(new Color(135, 206, 235));
+		_pnlAdd.setBackground(new Color(224, 255, 255));
+		
+		north_panel.add(_pnlAdd);
+		_pnlAdd.setLayout(new GridLayout(0, 1, 0, 0));
+		_fieldText.setToolTipText("Please input any strategy you want, from strategy.XXStrategy");
+		_pnlAdd.add(_fieldText);
+		_fieldText.setColumns(10);
+		_brnAddList.setToolTipText("Add the input strategy into the two droplists");
+		_brnAddList.setForeground(Color.BLACK);
+		_brnAddList.setBackground(new Color(0, 0, 0));
+		_pnlAdd.add(_brnAddList);
+		_pnlCombine.setBackground(new Color(224, 255, 255));
+		
+		north_panel.add(_pnlCombine);
+		_pnlCombine.setLayout(new GridLayout(0, 1, 0, 0));
+		_btnCombine.setToolTipText("Create a new Strategy by combining two selected strategies in the top and bottom droplists");
+		_btnCombine.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				@SuppressWarnings("unchecked")
+				TDropListItem selectedItem1 = (TDropListItem) _list1DL.getSelectedItem();
+				@SuppressWarnings("unchecked")
+				TDropListItem selectedItem2 = (TDropListItem) _list2DL.getSelectedItem();
+				TDropListItem temp = model_control.combineStrategies(selectedItem1, selectedItem2);
+                int count = _list1DL.getItemCount();
+                boolean flag = true;
+                for (int i = 0; i < count; i++) {
+                    if(_list1DL.getItemAt(i).toString().equals(temp.toString())) {
+                    		flag = false;
+                    		break;
+                    }
+                }
+                if(flag == true) {
+                		_list1DL.insertItemAt(temp, 0);                	
+                }
+	             
+			}
+		});
+
+		
+		_pnlCombine.add(_btnCombine);
+		_pnlCombine.add(_list1DL);
+		_pnlCombine.add(_list2DL);
+		panel.setBackground(new Color(224, 255, 255));
+		
+		north_panel.add(panel);
+		panel.setLayout(new GridLayout(0, 1, 0, 0));
+		_btnMakeSwitch.setToolTipText("Make a Ball that can switch strategies");
+		_btnMakeSwitch.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				model_update.get_Straight();
+			}
+		});
+		
+		panel.add(_btnMakeSwitch);
+		_btnSwitch.setToolTipText("Switch all the switcher ball to the strategy selected in the top droplist");
+		_btnSwitch.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				@SuppressWarnings("unchecked")
+				TDropListItem temp1 = (TDropListItem) _list1DL.getSelectedItem();
+				model_control.switchStrategy(temp1);
+			}
+		});
+		
+		panel.add(_btnSwitch);
+		panel_1.setBackground(new Color(224, 255, 255));
+		
+		north_panel.add(panel_1);
+		panel_1.setLayout(new GridLayout(0, 1, 0, 0));
+		_btnClear.setToolTipText("Clear all the ball on screen");
+		panel_1.add(_btnClear);
+		_lblText.setToolTipText("Show how many balls are on screen");
+		_lblText.setHorizontalAlignment(SwingConstants.CENTER);
+		panel_1.add(_lblText);
+		_btnClear.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				model_update.clear();
+			}
+		});
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 631, 415);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		contentPane.setLayout(new BorderLayout(0, 0));
+		setContentPane(contentPane);
+		_pnlCanvas.setBackground(new Color(144, 238, 144));
+
+		contentPane.add(_pnlCanvas, BorderLayout.CENTER);
+
+		_brnAddList.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				TDropListItem o = model_control.addStrategy(_fieldText.getText());
+                if (null == o) return; // just in case
+                int count = _list1DL.getItemCount();
+                boolean flag = true;
+                for (int i = 0; i < count; i++) {
+                    if(_list1DL.getItemAt(i).toString().equals(o.toString())) {
+                    		flag = false;
+                    		break;
+                    }
+                }
+                if(flag == true) {
+ 	               _list1DL.insertItemAt(o, 0);
+	               _list2DL.insertItemAt(o, 0);	                	
+                }
+                _fieldText.setText("");    
+			}
+		});
+		
+		contentPane.add(north_panel, BorderLayout.NORTH);
+		action_Listener();
+		get_canvas();
+	}
+
+	/**
+	 * get the classname of the ball and send it to controller and model
+	 */
+	public void action_Listener() {
+		_btnMakeball.setToolTipText("Make a Ball with the strategy selected in the top droplist");
+		_pnlCombine.add(_btnMakeball);
+		_btnMakeball.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				@SuppressWarnings("unchecked")
+				TDropListItem temp1 = (TDropListItem) _list1DL.getSelectedItem();
+				model_control.makeBall(temp1);
+			}
+		});
+	}
+
+	/**
+	 * the fundamental method to help repaint the panel
+	 */
+	public void update() {
+		_pnlCanvas.repaint();
+		_lblText.setText("Ball Number: " + count);
+	}
+
+	/**
+	 * get the canvas and send the canvas information to model through controller
+	 */
+	public void get_canvas() {
+		model_update.get_canvas(_pnlCanvas);
+	}
+
+	/**
+	 * get count from controller and model
+	 * @param count the count of all balls on screen
+	 */
+	public void get_count(int count) {
+		this.count = count;
+	}
+
+}

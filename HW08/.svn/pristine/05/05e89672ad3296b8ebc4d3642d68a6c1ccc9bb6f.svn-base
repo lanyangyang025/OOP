@@ -1,0 +1,46 @@
+package model;
+
+import java.rmi.RemoteException;
+import java.util.UUID;
+
+import common.DataPacketChatRoom;
+import common.IAddReceiverType;
+import common.IReceiver;
+import common.IUser;
+import model.cmd.AddReceiverAlgoCmd;
+import model.cmd.DefaultDataPacketAlgoCmd;
+import model.cmd.StringDataPacketAlgoCmd;
+import provided.datapacket.DataPacketAlgo;
+
+public class Receiver implements IReceiver{
+
+	private transient IUser user;
+	private UUID id = UUID.randomUUID();
+	private ChatRoom chatroom;
+
+	
+	public Receiver(IUser userStub, ChatRoom chatroom) {
+		// TODO Auto-generated constructor stub
+		this.user = userStub;
+		this.chatroom = chatroom;
+	}
+
+	@Override
+	public <T> void receive(DataPacketChatRoom<T> data) throws RemoteException {
+		// TODO Auto-generated method stub
+		chatroom.append(data.execute(chatroom.getdataAlgo())+"\n", user.getName());
+	}
+
+	@Override
+	public IUser getUserStub() throws RemoteException {
+		// TODO Auto-generated method stub
+		return user;
+	}
+
+	@Override
+	public UUID getUUID() throws RemoteException {
+		// TODO Auto-generated method stub
+		return chatroom.id;
+	}
+
+}

@@ -1,0 +1,174 @@
+package model;
+import java.rmi.RemoteException;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.UUID;
+
+import common.DataPacketChatRoom;
+import common.IAddReceiverType;
+import common.IChatRoom;
+import common.IReceiver;
+import provided.datapacket.DataPacket;
+import provided.datapacket.DataPacketAlgo;
+import view.ChatroomView;
+
+
+public class ChatRoom implements IChatRoom{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4835621848594850799L;
+	
+	String room;
+	UUID id = UUID.randomUUID();
+	HashSet<IReceiver> receiver_list;
+	DataPacketAlgo<String, String> dataAlgo;
+	transient IMini2ViewAdapter imini2viewadapter;
+	IReceiver receiver;
+	
+	public ChatRoom(String room, DataPacketAlgo<String, String> dataAlgo) {
+		// TODO Auto-generated constructor stub
+		this.room = room;
+		this.dataAlgo = dataAlgo;
+		receiver_list = new HashSet<IReceiver>();
+	}
+	
+	
+	public ChatRoom(IChatRoom room,DataPacketAlgo<String,String> dataAlgo) {
+		this.id = room.getUUID();
+		this.room = room.getName();
+		this.dataAlgo = dataAlgo;
+		
+		receiver_list = new HashSet<IReceiver>();
+		
+		for(IReceiver receiver: room.getIReceiverStubs()) {
+			receiver_list.add(receiver);
+		}
+	}
+	
+	
+
+	@Override
+	public String getName() {
+		// TODO Auto-generated method stub
+		return room;
+	}
+
+	@Override
+	public UUID getUUID() {
+		// TODO Auto-generated method stub
+		return id;
+	}
+
+	@Override
+	public Collection<IReceiver> getIReceiverStubs() {
+		// TODO Auto-generated method stub
+		return receiver_list;
+	}
+
+	public DataPacketAlgo<String, String> getdataAlgo(){
+		return dataAlgo;
+	}
+	
+	public void setMiniView(IMini2ViewAdapter imini2viewadapter) {
+		this.imini2viewadapter = imini2viewadapter;
+	}
+	
+	
+	@Override
+	public boolean addIReceiverStubLocally(IReceiver receiver) {
+		// TODO Auto-generated method stub
+		try {
+			for(IReceiver receiver1: receiver_list) {
+				if((receiver1.getUUID()+receiver1.getUserStub().getName()).equals(receiver.getUUID()+receiver.getUserStub().getName())) {
+					return false;
+				}
+			}
+		}catch(RemoteException e) {
+			e.printStackTrace();
+		}
+		receiver_list.add(receiver);
+		imini2viewadapter.addUserList(receiver);
+		return true;
+	}
+
+	@Override
+	public boolean removeIReceiverStubLocally(IReceiver receiver) {
+		// TODO Auto-generated method stub
+		try {
+			for(IReceiver receiver1: receiver_list) {
+				if((receiver1.getUUID()+receiver1.getUserStub().getName()).equals(receiver.getUUID()+receiver.getUserStub().getName())) {
+					receiver_list.remove(receiver);
+				}
+			}
+		}catch(RemoteException e) {
+			e.printStackTrace();
+		}
+		return true;
+	}
+
+	public void removeAllReceiver() {
+		receiver_list.clear();
+	}
+
+	public <T> void sendPacket(DataPacketChatRoom<T> data) {
+		// TODO Auto-generated method stub
+        new Thread(()->{
+
+	    		for(IReceiver receiver1: receiver_list) {
+	
+				try{
+					receiver1.receive(data);
+				}catch(RemoteException e){
+					e.printStackTrace();
+				}
+	    		}
+	    }).start();			
+	}
+	
+	
+
+
+	public void append(String string) {
+		// TODO Auto-generated method stub
+		imini2viewadapter.append(string);
+	}
+
+	
+	public void newConnect(IReceiver new_receiver) {
+		for(IReceiver temp : receiver_list) {
+
+			try {
+				temp.receive(new DataPacketChatRoom<IAddReceiverType>(IAddReceiverType.class,new IAddReceiverType() {
+
+					private static final long serialVersionUID = -8843924670451014077L;
+
+					@Override
+					public IReceiver getReceiverStub() {
+						return new_receiver;
+					}
+				},new_receiver));
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public void initSet(IReceiver receiverStub, Collection<IReceiver> collection) {
+		// TODO Auto-generated method stub
+		receiver = receiverStub;
+		receiver_list = new HashSet<IReceiver>();
+		for(IReceiver temp: collection) {
+			receiver_list.add(temp);
+		}
+		newConnect(receiver);
+		addIReceiverStubLocally(receiver);
+	}
+
+	
+	public ChatroomView getRoomView() {
+		return imini2viewadapter.getRoomView();
+	}
+	
+}

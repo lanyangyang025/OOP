@@ -1,0 +1,29 @@
+package model.strategy;
+
+import java.awt.Graphics;
+import java.awt.geom.AffineTransform;
+
+import ball.Ball;
+
+public class ADecoratorPaintStrategy extends APaintStrategy{
+
+	public APaintStrategy decoree;
+	
+	ADecoratorPaintStrategy(APaintStrategy decoree) {
+		super(new AffineTransform());
+		// TODO Auto-generated constructor stub
+		this.decoree = decoree;
+	}
+	
+	public void init(Ball host){
+		decoree.init(host);
+	}
+	
+	public void paint(Graphics g, Ball host) {
+		decoree.paint(g, host);
+	}
+	
+	public void paintXfrm(Graphics g, Ball host, AffineTransform at) {
+		decoree.paintXfrm(g, host, at);
+	}
+}

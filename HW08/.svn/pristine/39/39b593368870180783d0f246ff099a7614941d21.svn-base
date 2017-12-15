@@ -1,0 +1,89 @@
+/**
+ * 
+ */
+package model;
+
+import java.rmi.RemoteException;
+import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.UUID;
+
+import common.IChatRoom;
+import common.IReceiver;
+import common.IUser;
+import controller.MiniControl;
+import model.cmd.DefaultDataPacketAlgoCmd;
+import provided.datapacket.DataPacketAlgo;
+import provided.rmiUtils.IRMIUtils;
+import view.ChatroomView;
+
+
+public class ChatRoomImpl{
+
+	transient ArrayList<ChatRoom> room_list;
+	IUser user;
+	IModel2ViewAdapter adapter;
+	
+	IReceiver receiver, receiverStub;
+	
+	public ChatRoomImpl(IModel2ViewAdapter adapter, IUser user) {
+		room_list = new ArrayList<ChatRoom>();
+		this.user = user;
+		this.adapter = adapter;
+	}
+
+	/**
+	 * @return
+	 */
+	public List<ChatRoom> getChatRoomList() {
+		return room_list;
+	}
+	
+	public ChatroomView createChatRoom(ChatRoom new_chatroom, int USER_BOUND_PORT, DataPacketAlgo<String, String> dataAlgo) {
+		// TODO Auto-generated method stub
+		try {
+			
+			receiver = new Receiver(user, new_chatroom);
+			receiverStub = (IReceiver)UnicastRemoteObject.exportObject(receiver, USER_BOUND_PORT);
+			
+			MiniControl miniControl = new MiniControl(new_chatroom, receiverStub);	
+			
+			ChatroomView roomView = miniControl.getChatView();
+			
+			room_list.add(new_chatroom);
+			new_chatroom.initSet(receiverStub, new_chatroom.getIReceiverStubs()); 
+			
+			for(IReceiver temp: new_chatroom.getIReceiverStubs()) {
+				roomView.addUserList(temp);
+			}			
+			System.out.println(new_chatroom.getIReceiverStubs().size());
+			return roomView;
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}	
+	}
+
+	public ChatRoom getChatRoom(UUID uuid) {
+		// TODO Auto-generated method stub
+		for(ChatRoom room: room_list) {
+			if(room.getUUID().equals(uuid)) {
+				return room;
+			}
+		}
+		return null;
+	}
+
+	public ChatroomView joinChatRoom(IChatRoom request_room, int USER_BOUND_PORT, DataPacketAlgo<String, String> dataAlgo) {
+		// TODO Auto-generated method stub
+			ChatRoom new_chatroom = new ChatRoom(request_room, dataAlgo);
+			
+			return createChatRoom(new_chatroom, USER_BOUND_PORT, dataAlgo);
+
+	}
+
+}

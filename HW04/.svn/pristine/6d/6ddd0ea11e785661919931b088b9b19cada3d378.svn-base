@@ -1,0 +1,29 @@
+package strategy;
+
+import java.awt.Point;
+
+import ball.Ball;
+import util.Randomizer;
+
+/**
+ * a strategy of changing the ball's radius
+ * @author Ye Wang
+ * @author Dai Li
+ *
+ */
+public class BreathingStrategy extends IUpdateStrategy {
+
+	/**
+	 * change the radius of the ball
+	 * @param ball the ball under operation
+	 */
+	@Override
+	public void updateState(Ball ball) {
+		int oldRad = ball.getRadius();
+		int newRad = Randomizer.singleton.randomInt(Math.max(oldRad - 10, 1), Math.min(oldRad + 10, 30));
+		ball.setRadius(newRad);
+		Point oldLoc = ball.getLoc();
+		ball.setLoc(new Point(oldLoc.x + (oldRad - newRad), oldLoc.y + (oldRad - newRad)));
+	}
+
+}
